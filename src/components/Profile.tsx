@@ -48,6 +48,7 @@ interface Order {
   description: string;
   duration: string;
   category: string;
+  address: string;
 }
 
 // Обновляем маппинг статусов заказов на русский язык
@@ -539,6 +540,10 @@ const Profile = () => {
                                     <small className="text-muted d-block mb-2">
                                       <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
                                       Запланировано на: {new Date(order.scheduled_time).toLocaleString('ru-RU')}
+                                    </small>
+                                    <small className="text-muted d-block mb-2">
+                                      <FontAwesomeIcon icon={faMapMarkerAlt} className="me-2" />
+                                      Адрес: {order.address || 'Не указан'}
                                     </small>
                                     <strong className="d-block mt-3">
                                       Итоговая стоимость: {order.final_price} руб.
