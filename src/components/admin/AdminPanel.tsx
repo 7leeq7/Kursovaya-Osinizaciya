@@ -33,6 +33,9 @@ export const AdminPanel = () => {
   
   // Состояния для удаления услуги
   const [deletingService, setDeletingService] = useState<number | null>(null);
+  // Состояние для восстановления услуг
+  const [restoringServices, setRestoringServices] = useState(false);
+  const [restoreError, setRestoreError] = useState<string | null>(null);
 
   // Добавляем логирование при загрузке компонента
   console.log('AdminPanel component loaded');
@@ -319,6 +322,44 @@ export const AdminPanel = () => {
     }
   };
 
+  // Обработчик восстановления услуг
+  const handleRestoreServices = async () => {
+    try {
+      setRestoringServices(true);
+      setRestoreError(null);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Токен авторизации не найден');
+      }
+      
+      // Отправляем запрос на восстановление услуг
+      const response = await axios.post(
+        `${API_URL}/restore-services`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Обновляем список услуг
+      if (response.data.services) {
+        setServices(prev => [...prev, ...response.data.services]);
+      } else {
+        // Если сервер не вернул список услуг, обновим весь список с сервера
+        const servicesResponse = await axios.get(`${API_URL}/services`);
+        setServices(servicesResponse.data);
+      }
+      
+      alert(`Услуги успешно восстановлены. Добавлено: ${response.data.count} услуг.`);
+      
+    } catch (err: any) {
+      console.error('Ошибка при восстановлении услуг:', err);
+      setRestoreError(err.response?.data?.error || 'Ошибка при восстановлении услуг');
+      alert(err.response?.data?.error || 'Ошибка при восстановлении услуг');
+    } finally {
+      setRestoringServices(false);
+    }
+  };
+
   if (loading) {
     return (
       <Container className="py-5 text-center">
@@ -385,19 +426,34 @@ export const AdminPanel = () => {
         {/* Управление услугами */}
         <Col md={12} className="mb-4">
           <Card>
-            <Card.Header className="bg-success text-white d-flex justify-content-between align-items-center">
+            <Card.Header className="d-flex justify-content-between align-items-center">
               <h5 className="mb-0">
                 <FontAwesomeIcon icon={faClipboardList} className="me-2" />
                 Управление услугами
               </h5>
-              <Button 
-                variant="light" 
-                size="sm"
-                onClick={() => setShowAddServiceModal(true)}
-              >
-                <FontAwesomeIcon icon={faPlus} className="me-1" />
-                Добавить услугу
-              </Button>
+              <div>
+                <Button 
+                  variant="success" 
+                  onClick={() => setShowAddServiceModal(true)}
+                  className="me-2"
+                >
+                  <FontAwesomeIcon icon={faPlus} className="me-1" />
+                  Добавить услугу
+                </Button>
+                
+                <Button 
+                  variant="warning" 
+                  onClick={handleRestoreServices}
+                  disabled={restoringServices}
+                >
+                  {restoringServices ? (
+                    <>
+                      <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                      <span className="ms-1">Восстановление...</span>
+                    </>
+                  ) : 'Восстановить услуги'}
+                </Button>
+              </div>
             </Card.Header>
             <Card.Body>
               <div className="table-responsive">

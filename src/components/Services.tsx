@@ -33,7 +33,7 @@ const services: Service[] = [
     icon: faHome,
     title: 'Откачка септиков',
     description: 'Профессиональная откачка септиков и выгребных ям для частных домов',
-    price: 2000,
+    price: 200,
     duration: '30-60 минут',
     category: 'Частный сектор'
   },
@@ -42,7 +42,7 @@ const services: Service[] = [
     icon: faIndustry,
     title: 'Обслуживание предприятий',
     description: 'Комплексное обслуживание промышленных предприятий и производств',
-    price: 5000,
+    price: 500,
     duration: '1-2 часа',
     category: 'Промышленность'
   },
@@ -51,7 +51,7 @@ const services: Service[] = [
     icon: faWarehouse,
     title: 'Откачка отстойников',
     description: 'Очистка и откачка промышленных отстойников любого объема',
-    price: 15000,
+    price: 1500,
     duration: '2-4 часа',
     category: 'Промышленность'
   },
@@ -60,7 +60,7 @@ const services: Service[] = [
     icon: faRecycle,
     title: 'Утилизация отходов',
     description: 'Безопасная утилизация жидких бытовых отходов с соблюдением экологических норм',
-    price: 3000,
+    price: 300,
     duration: '1-2 часа',
     category: 'Утилизация'
   },
@@ -69,7 +69,7 @@ const services: Service[] = [
     icon: faCalendarAlt,
     title: 'Регулярное обслуживание',
     description: 'Плановая откачка по графику с гибкой системой скидок',
-    price: 1800,
+    price: 180,
     duration: '30-60 минут',
     category: 'Абонентское обслуживание'
   },
@@ -78,7 +78,7 @@ const services: Service[] = [
     icon: faClipboardCheck,
     title: 'Экспертиза и консультация',
     description: 'Профессиональная оценка состояния септиков и канализационных систем',
-    price: 1500,
+    price: 150,
     duration: '1 час',
     category: 'Консультации'
   },
@@ -87,7 +87,7 @@ const services: Service[] = [
     icon: faTools,
     title: 'Очистка канализации',
     description: 'Прочистка и промывка канализационных систем',
-    price: 2500,
+    price: 250,
     duration: '1-3 часа',
     category: 'Частный сектор'
   },
@@ -96,7 +96,7 @@ const services: Service[] = [
     icon: faTruck,
     title: 'Аварийный выезд',
     description: 'Срочный выезд в случае переполнения или аварийной ситуации',
-    price: 3500,
+    price: 350,
     duration: '30-60 минут',
     category: 'Экстренные вызовы'
   }

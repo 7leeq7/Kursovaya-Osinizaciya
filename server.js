@@ -163,8 +163,8 @@ function initializeDatabase() {
                                     return;
                                 }
                                 
-                                db.run('INSERT INTO users (username, email, password, role_id, first_order_discount) VALUES (?, ?, ?, ?, ?)',
-                                    [user.username, user.email, hashedPassword, user.role_id, true],
+                                db.run('INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, ?)',
+                                    [user.username, user.email, hashedPassword, user.role_id],
                                     function(err) {
                                         if (err) {
                                             console.error('Error creating user:', err);
@@ -1325,56 +1325,56 @@ app.post('/api/init/services', authenticateToken, authorizeRole(['admin']), (req
         {
             title: 'Откачка септиков',
             description: 'Профессиональная откачка септиков и выгребных ям для частных домов',
-            price: 2000,
+            price: 200,
             duration: '30-60 минут',
             category_id: 1 // Частный сектор
         },
         {
             title: 'Обслуживание предприятий',
             description: 'Комплексное обслуживание промышленных предприятий и производств',
-            price: 5000,
+            price: 500,
             duration: '1-2 часа',
             category_id: 2 // Промышленность
         },
         {
             title: 'Откачка отстойников',
             description: 'Очистка и откачка промышленных отстойников любого объема',
-            price: 15000,
+            price: 1500,
             duration: '2-4 часа',
             category_id: 2 // Промышленность
         },
         {
             title: 'Утилизация отходов',
             description: 'Безопасная утилизация жидких бытовых отходов с соблюдением экологических норм',
-            price: 3000,
+            price: 300,
             duration: '1-2 часа',
             category_id: 3 // Утилизация
         },
         {
             title: 'Регулярное обслуживание',
             description: 'Плановая откачка по графику с гибкой системой скидок',
-            price: 1800,
+            price: 180,
             duration: '30-60 минут',
             category_id: 4 // Абонентское обслуживание
         },
         {
             title: 'Экспертиза и консультация',
             description: 'Профессиональная оценка состояния септиков и канализационных систем',
-            price: 1500,
+            price: 150,
             duration: '1 час',
             category_id: 5 // Консультации
         },
         {
             title: 'Очистка канализации',
             description: 'Прочистка и промывка канализационных систем',
-            price: 2500,
+            price: 250,
             duration: '1-3 часа',
             category_id: 1 // Частный сектор
         },
         {
             title: 'Аварийный выезд',
             description: 'Срочный выезд в случае переполнения или аварийной ситуации',
-            price: 3500,
+            price: 350,
             duration: '30-60 минут',
             category_id: 6 // Экстренные вызовы
         }
@@ -1695,11 +1695,11 @@ app.patch('/api/admin/users/:id/profile', authenticateToken, authorizeRole(['adm
         if (columnNames.includes('discount_amount')) {
             query += ', discount_amount = ?';
             params.push(discount_amount || 0);
-        } else if (columnNames.includes('first_order_discount')) {
+        } /* else if (columnNames.includes('first_order_discount')) {
             // Если колонки discount_amount нет, но есть first_order_discount
             query += ', first_order_discount = ?';
             params.push(discount_amount && discount_amount > 0 ? 1 : 0);
-        }
+        } */
         
         query += ' WHERE id = ?';
         params.push(id);
@@ -1788,56 +1788,56 @@ app.post('/api/restore-services', authenticateToken, authorizeRole(['admin']), (
             {
                 title: 'Откачка септиков',
                 description: 'Профессиональная откачка септиков и выгребных ям для частных домов',
-                price: 2000,
+                price: 200,
                 duration: '30-60 минут',
                 category_id: 1 // Частный сектор
             },
             {
                 title: 'Обслуживание предприятий',
                 description: 'Комплексное обслуживание промышленных предприятий и производств',
-                price: 5000,
+                price: 500,
                 duration: '1-2 часа',
                 category_id: 2 // Промышленность
             },
             {
                 title: 'Откачка отстойников',
                 description: 'Очистка и откачка промышленных отстойников любого объема',
-                price: 15000,
+                price: 1500,
                 duration: '2-4 часа',
                 category_id: 2 // Промышленность
             },
             {
                 title: 'Утилизация отходов',
                 description: 'Безопасная утилизация жидких бытовых отходов с соблюдением экологических норм',
-                price: 3000,
+                price: 300,
                 duration: '1-2 часа',
                 category_id: 3 // Утилизация
             },
             {
                 title: 'Регулярное обслуживание',
                 description: 'Плановая откачка по графику с гибкой системой скидок',
-                price: 1800,
+                price: 180,
                 duration: '30-60 минут',
                 category_id: 4 // Абонентское обслуживание
             },
             {
                 title: 'Экспертиза и консультация',
                 description: 'Профессиональная оценка состояния септиков и канализационных систем',
-                price: 1500,
+                price: 150,
                 duration: '1 час',
                 category_id: 5 // Консультации
             },
             {
                 title: 'Очистка канализации',
                 description: 'Прочистка и промывка канализационных систем',
-                price: 2500,
+                price: 250,
                 duration: '1-3 часа',
                 category_id: 1 // Частный сектор
             },
             {
                 title: 'Аварийный выезд',
                 description: 'Срочный выезд в случае переполнения или аварийной ситуации',
-                price: 3500,
+                price: 350,
                 duration: '30-60 минут',
                 category_id: 6 // Экстренные вызовы
             }

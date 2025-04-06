@@ -22,7 +22,7 @@ const ServicesList = () => {
       id: 1,
       title: 'Откачка септика',
       description: 'Качественная и быстрая очистка септиков любой сложности и объема.',
-      price: 1500,
+      price: 150,
       priceUnit: 'от',
       icon: faTruck,
       popular: true
@@ -31,7 +31,7 @@ const ServicesList = () => {
       id: 2,
       title: 'Откачка выгребных ям',
       description: 'Профессиональная очистка выгребных ям с применением специального оборудования.',
-      price: 1300,
+      price: 130,
       priceUnit: 'от',
       icon: faTruck,
       popular: true
@@ -40,7 +40,7 @@ const ServicesList = () => {
       id: 3,
       title: 'Прочистка канализации',
       description: 'Устранение засоров в трубах с использованием гидродинамического оборудования.',
-      price: 2000,
+      price: 200,
       priceUnit: 'от',
       icon: faWrench,
       popular: false
@@ -49,7 +49,7 @@ const ServicesList = () => {
       id: 4,
       title: 'Обслуживание биотуалетов',
       description: 'Регулярное обслуживание и очистка биотуалетов для мероприятий и строительных площадок.',
-      price: 900,
+      price: 100,
       priceUnit: 'от',
       icon: faWrench,
       popular: false
@@ -58,7 +58,7 @@ const ServicesList = () => {
       id: 5,
       title: 'Вывоз ЖБО',
       description: 'Экологически безопасный вывоз жидких бытовых отходов на специализированные полигоны.',
-      price: 1800,
+      price: 180,
       priceUnit: 'от',
       icon: faTruck,
       popular: false
@@ -67,7 +67,7 @@ const ServicesList = () => {
       id: 6,
       title: 'Разработка документации',
       description: 'Подготовка технической документации для проектирования канализационных систем.',
-      price: 5000,
+      price: 500,
       priceUnit: '',
       icon: faFileAlt,
       popular: false
