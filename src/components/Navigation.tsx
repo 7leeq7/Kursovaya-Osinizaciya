@@ -69,7 +69,6 @@ export const Navigation = () => {
                     ({isAdmin() ? 'Админ' : 
                       isEmployee() ? 'Сотрудник' : 
                       'Пользователь'})
-                    {user.role_id && ` [role_id: ${user.role_id}]`}
                   </span>
                 </Nav.Link>
                 <Button 

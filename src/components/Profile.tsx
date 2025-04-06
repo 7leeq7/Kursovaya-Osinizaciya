@@ -304,27 +304,23 @@ const Profile = () => {
                           <Col md={6}>
                             <Card className="h-100 border-0 bg-light">
                               <Card.Body>
-                                <h6 className="text-muted mb-3">Основная информация</h6>
+                                <h6 className="text-muted mb-3">Информация о профиле</h6>
                                 <p className="mb-3">
                                   <FontAwesomeIcon icon={faUser} className="me-2 text-primary" />
-                                  <strong>Имя пользователя:</strong>
-                                  <br />
-                                  <span className="ms-4">{userData?.username}</span>
+                                  <strong>Имя:</strong> {userData?.username}
+                                </p>
+                                <p className="mb-3">
+                                  <FontAwesomeIcon icon={faEnvelope} className="me-2 text-primary" />
+                                  <strong>Email:</strong> {userData?.email}
                                 </p>
                                 <p className="mb-0">
-                                  <FontAwesomeIcon icon={faEnvelope} className="me-2 text-primary" />
-                                  <strong>Email:</strong>
+                                  <FontAwesomeIcon icon={faCalendarAlt} className="me-2 text-primary" />
+                                  <strong>Дата регистрации:</strong>
                                   <br />
-                                  <span className="ms-4">{userData?.email}</span>
+                                  <span className="ms-4">
+                                    {userData?.created_at ? new Date(userData.created_at).toLocaleString() : 'Не указана'}
+                                  </span>
                                 </p>
-                                {userData?.discountAmount > 0 && (
-                                  <div className="mt-3 p-2 bg-success bg-opacity-10 rounded">
-                                    <p className="mb-0 text-success">
-                                      <FontAwesomeIcon icon={faPercent} className="me-2" />
-                                      <strong>У вас есть скидка {userData.discountAmount}% на первый заказ!</strong>
-                                    </p>
-                                  </div>
-                                )}
                               </Card.Body>
                             </Card>
                           </Col>

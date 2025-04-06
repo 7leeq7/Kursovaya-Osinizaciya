@@ -195,7 +195,7 @@ export const EmployeePanel = () => {
                           <td>{order.id}</td>
                           <td>{order.user_name}</td>
                           <td>{order.service_title || order.title}</td>
-                          <td>{order.final_price} ₽{order.discount_applied && <Badge bg="success" className="ms-1">-10%</Badge>}</td>
+                          <td>{order.final_price} ₽</td>
                           <td>{new Date(order.scheduled_time).toLocaleString()}</td>
                           <td>
                             <Badge bg={

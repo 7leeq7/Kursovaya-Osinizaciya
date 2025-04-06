@@ -7,20 +7,24 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 
+// Добавляем интерфейс Service
+interface Service {
+  id: number;
+  title: string;
+  price: number;
+  duration: string;
+  description?: string;
+  category?: string;
+}
+
 interface ServiceOrderProps {
   show: boolean;
   onHide: () => void;
-  service: {
-    id: number;
-    title: string;
-    price: number;
-    duration: string;
-  };
+  service: Service;
   onOrderComplete: () => void;
-  hasDiscount: boolean;
 }
 
-export const ServiceOrder = ({ show, onHide, service, onOrderComplete, hasDiscount }: ServiceOrderProps) => {
+export const ServiceOrder = ({ show, onHide, service, onOrderComplete }: ServiceOrderProps) => {
   const navigate = useNavigate();
   const [scheduledTime, setScheduledTime] = useState('');
   const [address, setAddress] = useState('');
@@ -67,14 +71,6 @@ export const ServiceOrder = ({ show, onHide, service, onOrderComplete, hasDiscou
     }
   };
 
-  const calculateFinalPrice = () => {
-    if (hasDiscount) {
-      const discountedPrice = service.price * 0.9;
-      return Math.round(discountedPrice); // Округляем до целого числа
-    }
-    return service.price;
-  };
-
   // Получаем минимальную дату (сегодня) и максимальную дату (через месяц)
   const getMinDate = () => {
     const today = new Date();
@@ -110,13 +106,6 @@ export const ServiceOrder = ({ show, onHide, service, onOrderComplete, hasDiscou
               <p className="mb-2">
                 Стоимость: {service.price} руб.
               </p>
-              {hasDiscount && (
-                <Alert variant="success">
-                  У вас есть скидка 10% на этот заказ!
-                  <br />
-                  Итоговая стоимость: {calculateFinalPrice()} руб.
-                </Alert>
-              )}
             </div>
 
             <Form.Group className="mb-3">

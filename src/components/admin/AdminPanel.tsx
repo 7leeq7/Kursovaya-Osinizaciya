@@ -249,7 +249,6 @@ export const AdminPanel = () => {
       phone: user.phone || '',
       address: user.address || '',
       full_name: user.full_name || '',
-      discountAmount: user.discountAmount || 0,
       birthday: user.birthday || ''
     });
     setShowEditUserModal(true);
@@ -288,7 +287,6 @@ export const AdminPanel = () => {
           phone: selectedUser.phone,
           address: selectedUser.address,
           full_name: selectedUser.full_name,
-          discount_amount: selectedUser.discountAmount,
           birthday: selectedUser.birthday
         },
         { headers: { Authorization: `Bearer ${token}` } }

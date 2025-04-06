@@ -91,12 +91,11 @@ function initializeDatabase() {
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
+            role_id INTEGER NOT NULL,
             phone TEXT,
             address TEXT,
-            role_id INTEGER NOT NULL DEFAULT 3,
-            first_order_discount BOOLEAN DEFAULT true,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (role_id) REFERENCES roles (id)
+            FOREIGN KEY (role_id) REFERENCES roles(id)
         )`, (err) => {
             if (err) {
                 console.error('Error creating users table:', err);
@@ -500,8 +499,8 @@ app.post('/api/register', async (req, res) => {
         // Создаем пользователя
         const result = await new Promise((resolve, reject) => {
             db.run(
-                'INSERT INTO users (username, email, password, phone, address, role_id, first_order_discount) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [username, email, hashedPassword, phone || null, address || null, userRoleId, true],
+                'INSERT INTO users (username, email, password, phone, address, role_id) VALUES (?, ?, ?, ?, ?, ?)',
+                [username, email, hashedPassword, phone || null, address || null, userRoleId],
                 function(err) {
                     if (err) reject(err);
                     resolve(this);
@@ -737,7 +736,7 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
         // Получаем обновленные данные пользователя
         const user = await new Promise((resolve, reject) => {
             db.get(
-                'SELECT id, username, email, phone, address, first_order_discount FROM users WHERE id = ?',
+                'SELECT id, username, email, phone, address FROM users WHERE id = ?',
                 [req.user.userId],
                 (err, row) => {
                     if (err) reject(err);
@@ -746,11 +745,7 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
             );
         });
 
-        res.json({
-            ...user,
-            hasDiscount: user.first_order_discount,
-            discountAmount: user.first_order_discount ? 10 : 0
-        });
+        res.json(user);
     } catch (error) {
         console.error('Ошибка при обновлении профиля:', error);
         res.status(500).json({ error: 'Ошибка при обновлении профиля' });
@@ -1011,28 +1006,14 @@ app.post('/api/orders', authenticateToken, (req, res) => {
                 return res.status(404).json({ error: 'Услуга не найдена' });
             }
             
-            // Проверяем скидку на первый заказ
-            let final_price = service.price;
-            let discount_applied = false;
-            
-            if (user.first_order_discount) {
-                final_price = service.price * 0.9; // 10% скидка
-                discount_applied = true;
-            }
-            
             // Создаем заказ
             db.run(
                 'INSERT INTO orders (user_id, service_id, status, discount_applied, final_price, scheduled_time) VALUES (?, ?, ?, ?, ?, ?)',
-                [user_id, finalServiceId, 'pending', discount_applied, final_price, finalScheduledTime],
+                [user_id, finalServiceId, 'pending', false, service.price, finalScheduledTime],
                 function(err) {
                     if (err) {
                         console.error('Error creating order:', err);
                         return res.status(500).json({ error: 'Ошибка при создании заказа' });
-                    }
-                    
-                    // Если была применена скидка, обновляем пользователя
-                    if (discount_applied) {
-                        db.run('UPDATE users SET first_order_discount = 0 WHERE id = ?', [user_id]);
                     }
                     
                     // Возвращаем созданный заказ

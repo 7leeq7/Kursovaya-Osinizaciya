@@ -106,7 +106,6 @@ export const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
-  const [hasDiscount, setHasDiscount] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
@@ -116,12 +115,7 @@ export const Services = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const [servicesResponse, profileResponse] = await Promise.all([
-          axios.get(`${API_URL}/services`),
-          axios.get(`${API_URL}/profile`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        ]);
+        const servicesResponse = await axios.get(`${API_URL}/services`);
 
         const services = servicesResponse.data;
         setServices(services);
@@ -129,10 +123,6 @@ export const Services = () => {
         // Получаем уникальные категории
         const uniqueCategories = Array.from(new Set(services.map((s: Service) => s.category))) as string[];
         setCategories(uniqueCategories);
-
-        // Проверяем наличие скидки у пользователя
-        const discountAmount = profileResponse.data.discountAmount;
-        setHasDiscount(discountAmount > 0);
       } catch (error) {
         console.error('Error fetching services:', error);
       }
@@ -147,16 +137,7 @@ export const Services = () => {
   };
 
   const handleOrderComplete = () => {
-    // Обновляем информацию о скидке после заказа
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.get(`${API_URL}/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(response => {
-        const discountAmount = response.data.discountAmount;
-        setHasDiscount(discountAmount > 0);
-      });
-    }
+    // Обработчик завершения заказа
   };
 
   const filteredServices = selectedCategory
@@ -211,11 +192,6 @@ export const Services = () => {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h5 className="mb-0">{service.price} руб.</h5>
-                    {hasDiscount && (
-                      <small className="text-success">
-                        Доступна скидка 10%!
-                      </small>
-                    )}
                   </div>
                   <Button
                     variant="primary"
@@ -236,7 +212,6 @@ export const Services = () => {
           onHide={() => setShowOrderModal(false)}
           service={selectedService}
           onOrderComplete={handleOrderComplete}
-          hasDiscount={hasDiscount}
         />
       )}
     </Container>
