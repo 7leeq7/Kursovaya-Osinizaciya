@@ -341,17 +341,41 @@ function initializeDatabase() {
             user_id INTEGER NOT NULL,
             service_id INTEGER NOT NULL,
             status TEXT DEFAULT 'pending',
-            discount_applied BOOLEAN DEFAULT false,
-            final_price DECIMAL(10,2) NOT NULL,
+            discount_applied BOOLEAN DEFAULT 0,
+            final_price REAL NOT NULL,
+            address TEXT,
+            scheduled_time DATETIME NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            scheduled_time DATETIME,
-            FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGN KEY (service_id) REFERENCES services (id)
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (service_id) REFERENCES services(id)
         )`, (err) => {
             if (err) {
                 console.error('Error creating orders table:', err);
             } else {
-                console.log('Orders table created successfully');
+                console.log('Orders table created successfully or already exists');
+                
+                // Проверяем, существует ли столбец address в таблице orders
+                db.all("PRAGMA table_info(orders)", [], (err, rows) => {
+                    if (err) {
+                        console.error('Error checking orders table columns:', err);
+                        return;
+                    }
+                    
+                    // Проверяем, есть ли столбец address
+                    const hasAddressColumn = rows.some(row => row.name === 'address');
+                    
+                    if (!hasAddressColumn) {
+                        console.log('Adding address column to orders table...');
+                        // Добавляем столбец address, если его нет
+                        db.run("ALTER TABLE orders ADD COLUMN address TEXT", (err) => {
+                            if (err) {
+                                console.error('Error adding address column to orders table:', err);
+                            } else {
+                                console.log('Address column added to orders table successfully');
+                            }
+                        });
+                    }
+                });
             }
         });
         
@@ -940,7 +964,8 @@ app.post('/api/orders', authenticateToken, (req, res) => {
     // Поддержка разных вариантов имен полей (camelCase и snake_case)
     const { 
         service_id, serviceId, 
-        scheduled_time, scheduledTime 
+        scheduled_time, scheduledTime,
+        address
     } = req.body;
     
     const user_id = req.user.userId;
@@ -953,7 +978,8 @@ app.post('/api/orders', authenticateToken, (req, res) => {
     console.log('Creating order with data:', {
         originalBody: req.body,
         finalServiceId,
-        finalScheduledTime
+        finalScheduledTime,
+        address
     });
     
     if (!finalServiceId || !finalScheduledTime) {
@@ -1006,10 +1032,10 @@ app.post('/api/orders', authenticateToken, (req, res) => {
                 return res.status(404).json({ error: 'Услуга не найдена' });
             }
             
-            // Создаем заказ
+            // Создаем заказ с адресом
             db.run(
-                'INSERT INTO orders (user_id, service_id, status, discount_applied, final_price, scheduled_time) VALUES (?, ?, ?, ?, ?, ?)',
-                [user_id, finalServiceId, 'pending', false, service.price, finalScheduledTime],
+                'INSERT INTO orders (user_id, service_id, status, discount_applied, final_price, scheduled_time, address) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [user_id, finalServiceId, 'pending', false, service.price, finalScheduledTime, address || ''],
                 function(err) {
                     if (err) {
                         console.error('Error creating order:', err);
@@ -1055,6 +1081,7 @@ app.get('/api/orders', authenticateToken, (req, res) => {
                   s.duration,
                   u.username as user_name, 
                   u.email as user_email,
+                  o.address,
                   datetime(o.created_at, 'localtime') as created_at,
                   datetime(o.scheduled_time, 'localtime') as scheduled_time
                 FROM orders o
@@ -1078,6 +1105,7 @@ app.get('/api/orders', authenticateToken, (req, res) => {
                   s.title as title,
                   s.description,
                   s.duration,
+                  o.address,
                   datetime(o.created_at, 'localtime') as created_at,
                   datetime(o.scheduled_time, 'localtime') as scheduled_time
                 FROM orders o
@@ -1094,6 +1122,69 @@ app.get('/api/orders', authenticateToken, (req, res) => {
                 }
             );
         }
+    });
+});
+
+// Обновление заказа
+app.patch('/api/orders/:id', authenticateToken, authorizeRole(['admin', 'employee']), (req, res) => {
+    const { id } = req.params;
+    const { service_id, scheduled_time, address } = req.body;
+    
+    // Проверяем, существует ли заказ
+    db.get('SELECT * FROM orders WHERE id = ?', [id], (err, order) => {
+        if (err) {
+            return res.status(500).json({ error: 'Ошибка при проверке заказа' });
+        }
+        
+        if (!order) {
+            return res.status(404).json({ error: 'Заказ не найден' });
+        }
+        
+        // Проверяем, существует ли выбранная услуга
+        db.get('SELECT * FROM services WHERE id = ?', [service_id], (err, service) => {
+            if (err) {
+                return res.status(500).json({ error: 'Ошибка при проверке услуги' });
+            }
+            
+            if (!service) {
+                return res.status(404).json({ error: 'Услуга не найдена' });
+            }
+            
+            // Обновляем заказ
+            db.run(
+                'UPDATE orders SET service_id = ?, scheduled_time = ?, address = ?, final_price = ? WHERE id = ?',
+                [service_id, scheduled_time, address, service.price, id],
+                function(err) {
+                    if (err) {
+                        console.error('Error updating order:', err);
+                        return res.status(500).json({ error: 'Ошибка при обновлении заказа' });
+                    }
+                    
+                    if (this.changes === 0) {
+                        return res.status(404).json({ error: 'Заказ не найден или не был изменен' });
+                    }
+                    
+                    // Возвращаем обновленный заказ
+                    db.get(
+                        `SELECT o.*, 
+                          s.title as service_title, 
+                          s.description as service_description,
+                          s.duration
+                        FROM orders o
+                        JOIN services s ON o.service_id = s.id
+                        WHERE o.id = ?`,
+                        [id],
+                        (err, updatedOrder) => {
+                            if (err) {
+                                return res.status(500).json({ error: 'Ошибка при получении обновленного заказа' });
+                            }
+                            
+                            res.json(updatedOrder);
+                        }
+                    );
+                }
+            );
+        });
     });
 });
 
@@ -1128,6 +1219,59 @@ app.post('/api/services', authenticateToken, authorizeRole(['admin', 'employee']
             );
         }
     );
+});
+
+// Обновление услуги (только для админов и сотрудников)
+app.put('/api/services/:id', authenticateToken, authorizeRole(['admin', 'employee']), (req, res) => {
+    const { id } = req.params;
+    const { title, description, price, duration, category_id } = req.body;
+    
+    if (!title || !description || !price || !duration || !category_id) {
+        return res.status(400).json({ error: 'Все поля обязательны' });
+    }
+    
+    // Проверяем, существует ли услуга
+    db.get('SELECT * FROM services WHERE id = ?', [id], (err, service) => {
+        if (err) {
+            return res.status(500).json({ error: 'Ошибка при проверке услуги' });
+        }
+        
+        if (!service) {
+            return res.status(404).json({ error: 'Услуга не найдена' });
+        }
+        
+        // Обновляем услугу
+        db.run(
+            'UPDATE services SET title = ?, description = ?, price = ?, duration = ?, category_id = ? WHERE id = ?',
+            [title, description, price, duration, category_id, id],
+            function(err) {
+                if (err) {
+                    console.error('Error updating service:', err);
+                    return res.status(500).json({ error: 'Ошибка при обновлении услуги' });
+                }
+                
+                if (this.changes === 0) {
+                    return res.status(404).json({ error: 'Услуга не найдена или не была изменена' });
+                }
+                
+                // Возвращаем обновленную услугу
+                db.get(
+                    `SELECT s.id, s.title, s.description, s.price, s.duration, c.name as category, c.id as category_id
+                    FROM services s
+                    JOIN categories c ON s.category_id = c.id
+                    WHERE s.id = ?`,
+                    [id],
+                    (err, updatedService) => {
+                        if (err) {
+                            return res.status(500).json({ error: 'Ошибка при получении обновленной услуги' });
+                        }
+                        
+                        res.json(updatedService);
+                    }
+                );
+            }
+        );
+    });
 });
 
 // Удаление услуги (только для админов)
