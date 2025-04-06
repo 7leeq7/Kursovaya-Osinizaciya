@@ -2,7 +2,7 @@
 ## Тема: "Разработка веб-приложения для автоматизированного управления услугами ассенизации"
 
 <div align="center">
-  <img src="./assets/mitso-logo.png" alt="МИТСО Логотип" width="200">
+  <img src="./src/assets/images/mitso-logo.png" alt="МИТСО Логотип" width="200">
 </div>
 
 ## Описание проекта
