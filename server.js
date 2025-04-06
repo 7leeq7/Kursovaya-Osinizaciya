@@ -1149,6 +1149,44 @@ app.post('/api/services', authenticateToken, authorizeRole(['admin', 'employee']
     );
 });
 
+// Удаление услуги (только для админов)
+app.delete('/api/services/:id', authenticateToken, authorizeRole(['admin']), (req, res) => {
+    const { id } = req.params;
+    
+    // Проверяем, используется ли услуга в заказах
+    db.get('SELECT COUNT(*) as count FROM orders WHERE service_id = ?', [id], (err, result) => {
+        if (err) {
+            console.error('Ошибка при проверке использования услуги:', err);
+            return res.status(500).json({ error: 'Ошибка при удалении услуги' });
+        }
+        
+        // Если услуга используется в заказах, запрещаем удаление
+        if (result.count > 0) {
+            return res.status(400).json({ 
+                error: 'Невозможно удалить услугу, так как она уже используется в заказах',
+                count: result.count
+            });
+        }
+        
+        // Удаляем услугу
+        db.run('DELETE FROM services WHERE id = ?', [id], function(err) {
+            if (err) {
+                console.error('Ошибка при удалении услуги:', err);
+                return res.status(500).json({ error: 'Ошибка при удалении услуги' });
+            }
+            
+            if (this.changes === 0) {
+                return res.status(404).json({ error: 'Услуга не найдена' });
+            }
+            
+            res.json({ 
+                message: 'Услуга успешно удалена',
+                id: parseInt(id)
+            });
+        });
+    });
+});
+
 // Заполнение тестовых услуг
 app.post('/api/init/services', authenticateToken, authorizeRole(['admin']), (req, res) => {
     const services = [
@@ -1395,6 +1433,166 @@ app.patch('/api/admin/users/:id/role', authenticateToken, authorizeRole(['admin'
             );
         }
     );
+});
+
+// Обновление профиля пользователя администратором
+app.patch('/api/admin/users/:id/profile', authenticateToken, authorizeRole(['admin']), async (req, res) => {
+    const { id } = req.params;
+    const { username, email, phone, address, full_name, discount_amount, birthday } = req.body;
+    
+    console.log('Обновление профиля администратором:', {
+        id,
+        username,
+        email,
+        phone,
+        address,
+        full_name,
+        discount_amount,
+        birthday,
+        body: req.body
+    });
+    
+    try {
+        // Проверяем обязательные поля
+        if (!username || !email) {
+            return res.status(400).json({ error: 'Имя пользователя и email обязательны для заполнения' });
+        }
+
+        // Проверяем, не занято ли имя пользователя или email другим пользователем
+        const existingUser = await new Promise((resolve, reject) => {
+            db.get(
+                'SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?',
+                [username, email, id],
+                (err, row) => {
+                    if (err) reject(err);
+                    resolve(row);
+                }
+            );
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Пользователь с таким именем или email уже существует' });
+        }
+        
+        // Проверяем структуру таблицы users
+        const columns = await new Promise((resolve, reject) => {
+            db.all("PRAGMA table_info(users)", [], (err, columns) => {
+                if (err) {
+                    console.error('Ошибка при проверке структуры таблицы:', err);
+                    reject(err);
+                    return;
+                }
+                resolve(columns);
+            });
+        });
+        
+        // Получаем список имен колонок
+        const columnNames = columns.map(column => column.name);
+        console.log('Колонки в таблице users:', columnNames);
+        
+        // Формируем запрос динамически на основе существующих колонок
+        let query = 'UPDATE users SET username = ?, email = ?';
+        const params = [username, email];
+        
+        if (columnNames.includes('phone')) {
+            query += ', phone = ?';
+            params.push(phone || null);
+        }
+        
+        if (columnNames.includes('address')) {
+            query += ', address = ?';
+            params.push(address || null);
+        }
+        
+        if (columnNames.includes('full_name')) {
+            query += ', full_name = ?';
+            params.push(full_name || null);
+        } else {
+            // Если колонки full_name нет, пробуем использовать name
+            if (columnNames.includes('name')) {
+                query += ', name = ?';
+                params.push(full_name || null);
+            }
+        }
+        
+        if (columnNames.includes('birthday')) {
+            query += ', birthday = ?';
+            params.push(birthday || null);
+        }
+        
+        if (columnNames.includes('discount_amount')) {
+            query += ', discount_amount = ?';
+            params.push(discount_amount || 0);
+        } else if (columnNames.includes('first_order_discount')) {
+            // Если колонки discount_amount нет, но есть first_order_discount
+            query += ', first_order_discount = ?';
+            params.push(discount_amount && discount_amount > 0 ? 1 : 0);
+        }
+        
+        query += ' WHERE id = ?';
+        params.push(id);
+        
+        console.log('SQL-запрос:', query);
+        console.log('Параметры:', params);
+
+        // Обновляем данные пользователя
+        await new Promise((resolve, reject) => {
+            db.run(query, params, function(err) {
+                if (err) {
+                    console.error('Ошибка при обновлении профиля:', err);
+                    reject(err);
+                    return;
+                }
+                
+                if (this.changes === 0) {
+                    console.error('Пользователь не найден:', id);
+                    reject(new Error('Пользователь не найден'));
+                    return;
+                }
+                
+                console.log('Профиль успешно обновлен:', id);
+                resolve(true);
+            });
+        });
+
+        // Получаем обновленные данные пользователя
+        const user = await new Promise((resolve, reject) => {
+            db.get(
+                `SELECT u.id, u.username, u.email, u.phone, u.address, r.name as role
+                FROM users u
+                JOIN roles r ON u.role_id = r.id
+                WHERE u.id = ?`,
+                [id],
+                (err, row) => {
+                    if (err) {
+                        console.error('Ошибка при получении данных пользователя:', err);
+                        reject(err);
+                    } else {
+                        // Добавляем поля, которые могут быть в таблице
+                        if (columnNames.includes('full_name')) {
+                            row.full_name = row.full_name || null;
+                        }
+                        if (columnNames.includes('birthday')) {
+                            row.birthday = row.birthday || null;
+                        }
+                        if (columnNames.includes('discount_amount')) {
+                            row.discount_amount = row.discount_amount || 0;
+                        }
+                        resolve(row);
+                    }
+                }
+            );
+        });
+
+        res.json(user);
+    } catch (error) {
+        console.error('Ошибка при обновлении профиля пользователя:', error);
+        console.error('Стек ошибки:', error.stack);
+        if (error.message === 'Пользователь не найден') {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
+        res.status(500).json({ error: 'Ошибка при обновлении профиля пользователя' });
+    }
 });
 
 // Добавляю эндпоинт для восстановления услуг, если они пропали
