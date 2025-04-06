@@ -9,6 +9,9 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Получаем путь к базе данных относительно текущего каталога проекта
+const dbPath = process.env.DB_PATH || path.join(__dirname, 'database.sqlite');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -25,12 +28,12 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Database setup
-const db = new sqlite3.Database(process.env.DB_PATH, (err) => {
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error connecting to database:', err);
-        console.error('Database path:', process.env.DB_PATH);
+        console.error('Database path:', dbPath);
     } else {
-        console.log('Connected to SQLite database at:', process.env.DB_PATH);
+        console.log('Connected to SQLite database at:', dbPath);
         console.log('Database connection successful');
         initializeDatabase();
     }
@@ -697,8 +700,10 @@ app.delete('/api/tasks/:id', authenticateToken, (req, res) => {
 
 // User profile routes
 app.get('/api/profile', authenticateToken, (req, res) => {
+    console.log('Profile request received, userId:', req.user.userId);
+    
     db.get(
-        `SELECT u.id, u.username, u.email, u.phone, u.address, r.name as role, u.role_id, u.first_order_discount,
+        `SELECT u.id, u.username, u.email, u.phone, u.address, r.name as role, u.role_id,
         datetime(u.created_at, 'localtime') as created_at
         FROM users u
         JOIN roles r ON u.role_id = r.id
@@ -706,9 +711,11 @@ app.get('/api/profile', authenticateToken, (req, res) => {
         [req.user.userId],
         (err, user) => {
             if (err) {
+                console.error('Error fetching profile:', err);
                 return res.status(500).json({ error: 'Ошибка при получении профиля' });
             }
             if (!user) {
+                console.error('User not found for ID:', req.user.userId);
                 return res.status(404).json({ error: 'Пользователь не найден' });
             }
             
