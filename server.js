@@ -387,12 +387,11 @@ function initializeDatabase() {
         db.run(`CREATE TABLE IF NOT EXISTS feedback (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
-            order_id INTEGER NOT NULL,
+            order_id INTEGER DEFAULT 0,
             rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
             comment TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGN KEY (order_id) REFERENCES orders (id)
+            FOREIGN KEY (user_id) REFERENCES users (id)
         )`, (err) => {
             if (err) {
                 console.error('Error creating feedback table:', err);
@@ -1491,56 +1490,79 @@ app.post('/api/feedback', authenticateToken, (req, res) => {
     const { order_id, rating, comment } = req.body;
     const user_id = req.user.userId;
     
-    if (!order_id || !rating || rating < 1 || rating > 5) {
+    if (!rating || rating < 1 || rating > 5 || !comment) {
         return res.status(400).json({ error: 'Некорректные данные отзыва' });
     }
     
-    // Проверяем, существует ли заказ и принадлежит ли он пользователю
-    db.get('SELECT * FROM orders WHERE id = ? AND user_id = ?', [order_id, user_id], (err, order) => {
-        if (err || !order) {
-            return res.status(404).json({ error: 'Заказ не найден или не принадлежит пользователю' });
-        }
-        
-        // Проверяем, есть ли уже отзыв на этот заказ
-        db.get('SELECT * FROM feedback WHERE order_id = ?', [order_id], (err, existing) => {
-            if (err) {
-                return res.status(500).json({ error: 'Ошибка при проверке отзыва' });
+    // Если указан order_id и он не равен 0, проверяем заказ
+    if (order_id && order_id !== 0) {
+        // Проверяем, существует ли заказ и принадлежит ли он пользователю
+        db.get('SELECT * FROM orders WHERE id = ? AND user_id = ?', [order_id, user_id], (err, order) => {
+            if (err || !order) {
+                return res.status(404).json({ error: 'Заказ не найден или не принадлежит пользователю' });
             }
             
-            if (existing) {
-                return res.status(400).json({ error: 'Отзыв для данного заказа уже существует' });
-            }
-            
-            // Добавляем отзыв
-            db.run(
-                'INSERT INTO feedback (user_id, order_id, rating, comment) VALUES (?, ?, ?, ?)',
-                [user_id, order_id, rating, comment || null],
-                function(err) {
-                    if (err) {
-                        return res.status(500).json({ error: 'Ошибка при добавлении отзыва' });
-                    }
-                    
-                    res.status(201).json({
-                        id: this.lastID,
-                        user_id,
-                        order_id,
-                        rating,
-                        comment
-                    });
+            // Проверяем, есть ли уже отзыв на этот заказ
+            db.get('SELECT * FROM feedback WHERE order_id = ?', [order_id], (err, existing) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Ошибка при проверке отзыва' });
                 }
-            );
+                
+                if (existing) {
+                    return res.status(400).json({ error: 'Отзыв для данного заказа уже существует' });
+                }
+                
+                // Добавляем отзыв с привязкой к заказу
+                db.run(
+                    'INSERT INTO feedback (user_id, order_id, rating, comment) VALUES (?, ?, ?, ?)',
+                    [user_id, order_id, rating, comment || null],
+                    function(err) {
+                        if (err) {
+                            return res.status(500).json({ error: 'Ошибка при добавлении отзыва' });
+                        }
+                        
+                        res.status(201).json({
+                            id: this.lastID,
+                            user_id,
+                            order_id,
+                            rating,
+                            comment
+                        });
+                    }
+                );
+            });
         });
-    });
+    } else {
+        // Добавляем отзыв без привязки к заказу (общий отзыв)
+        db.run(
+            'INSERT INTO feedback (user_id, order_id, rating, comment) VALUES (?, ?, ?, ?)',
+            [user_id, 0, rating, comment],
+            function(err) {
+                if (err) {
+                    return res.status(500).json({ error: 'Ошибка при добавлении отзыва' });
+                }
+                
+                res.status(201).json({
+                    id: this.lastID,
+                    user_id,
+                    order_id: 0,
+                    rating,
+                    comment
+                });
+            }
+        );
+    }
 });
 
 // Получение отзывов (публичный доступ)
 app.get('/api/feedback', (req, res) => {
     db.all(
-        `SELECT f.*, u.username, s.title as service_title 
+        `SELECT f.id, f.rating, f.comment, f.created_at, u.username, 
+        CASE WHEN f.order_id = 0 THEN NULL ELSE s.title END as service_title 
         FROM feedback f
         JOIN users u ON f.user_id = u.id
-        JOIN orders o ON f.order_id = o.id
-        JOIN services s ON o.service_id = s.id
+        LEFT JOIN orders o ON f.order_id = o.id
+        LEFT JOIN services s ON o.service_id = s.id
         ORDER BY f.created_at DESC`,
         [],
         (err, feedback) => {
