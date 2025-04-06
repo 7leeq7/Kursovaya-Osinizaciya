@@ -1,4 +1,4 @@
-import { Container, Row, Col, Card, Button, Form, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Spinner, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -9,13 +9,30 @@ import {
   faArrowRight,
   faStar as fasStar,
   faUser,
-  faComment
+  faComment,
+  faImages
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction, useRef } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 import { useAuthContext } from '../contexts/AuthContext';
+
+// Импорт изображений машин
+// @ts-ignore
+import truck1 from '../assets/images/trucks/truck1.jpg';
+// @ts-ignore
+import truck2 from '../assets/images/trucks/truck2.jpg';
+// @ts-ignore
+import truck3 from '../assets/images/trucks/truck3.jpg';
+// @ts-ignore
+import truck4 from '../assets/images/trucks/truck4.jpeg';
+// @ts-ignore
+import truck5 from '../assets/images/trucks/truck5.jpg';
+// @ts-ignore
+import truck6 from '../assets/images/trucks/truck6.jpg';
+// @ts-ignore
+import truck7 from '../assets/images/trucks/truck7.jpg';
 
 // Компонент для отображения рейтинга в виде звезд
 interface StarRatingProps {
@@ -56,7 +73,42 @@ export const Home = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [averageRating, setAverageRating] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const { user, isAuthenticated } = useAuthContext();
+  const carouselRef = useRef<any>(null);
+
+  // Массив с изображениями машин для карусели
+  const truckImages = [
+    { 
+      url: truck1, 
+      caption: 'Ассенизаторская машина на выезде' 
+    },
+    { 
+      url: truck2, 
+      caption: 'Современный парк техники' 
+    },
+    { 
+      url: truck3, 
+      caption: 'Работа на объекте' 
+    },
+    { 
+      url: truck4, 
+      caption: 'Спецтехника высокой мощности' 
+    },
+    { 
+      url: truck5, 
+      caption: 'Обслуживание промышленных объектов' 
+    },
+    {
+      url: truck6,
+      caption: 'Откачка септиков в частном секторе'
+    },
+    {
+      url: truck7,
+      caption: 'Техническое обслуживание канализационных систем'
+    }
+  
+  ];
 
   useEffect(() => {
     // Загрузка отзывов
@@ -126,6 +178,11 @@ export const Home = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Функция для установки активного слайда
+  const handleSelect = (selectedIndex: number) => {
+    setActiveIndex(selectedIndex);
   };
 
   return (
@@ -200,6 +257,83 @@ export const Home = () => {
               <Card.Text>
                 Круглосуточная поддержка для экстренных вызовов
               </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Фотогалерея машин */}
+      <Row className="mb-5">
+        <Col>
+          <h2 className="text-center mb-4">
+            <FontAwesomeIcon icon={faImages} className="text-primary me-2" />
+            Наш автопарк
+          </h2>
+          <Card className="shadow-sm">
+            <Card.Body className="p-0">
+              <Carousel
+                fade
+                interval={3000} 
+                className="truck-carousel"
+                indicators={true}
+                controls={true}
+                activeIndex={activeIndex}
+                onSelect={handleSelect}
+                ref={carouselRef}
+              >
+                {truckImages.map((image, index) => (
+                  <Carousel.Item key={index}>
+                    <div style={{ 
+                      height: '500px', 
+                      backgroundImage: `url(${image.url})`,
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                      backgroundRepeat: 'no-repeat',
+                      borderRadius: '0.375rem'
+                    }}>
+                    </div>
+                    <Carousel.Caption className="bg-dark bg-opacity-50 rounded p-3">
+                      <h3>{image.caption}</h3>
+                    </Carousel.Caption>
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+              
+              {/* Скроллируемая галерея миниатюр */}
+              <div className="truck-thumbnails mt-3 px-2" style={{ 
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                gap: '10px',
+                padding: '10px 0',
+                cursor: 'pointer'
+              }}>
+                {truckImages.map((image, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setActiveIndex(index)}
+                    style={{
+                      width: '150px',
+                      height: '100px',
+                      flexShrink: 0,
+                      backgroundImage: `url(${image.url})`,
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                      backgroundRepeat: 'no-repeat',
+                      borderRadius: '0.375rem',
+                      transition: 'transform 0.2s, border 0.2s',
+                      border: index === activeIndex ? '2px solid #0d6efd' : '2px solid #e9ecef',
+                      opacity: index === activeIndex ? 1 : 0.7,
+                    }}
+                    onMouseOver={(e) => {
+                      (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                    }}
+                    onMouseOut={(e) => {
+                      (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                    }}
+                  />
+                ))}
+              </div>
             </Card.Body>
           </Card>
         </Col>

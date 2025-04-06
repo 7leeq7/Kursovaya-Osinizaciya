@@ -12,6 +12,7 @@ import { RoleBasedRoute } from './components/RoleBasedRoute';
 import { Profile } from './components/Profile';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { EmployeePanel } from './components/employee/EmployeePanel';
+import { About } from './components/About';
 
 function App() {
   // Добавляем логирование при инициализации приложения
@@ -27,6 +28,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/about" element={<About />} />
           
           {/* Маршрут для админ-панели - только для пользователей с ролью admin */}
           <Route path="/admin" element={
