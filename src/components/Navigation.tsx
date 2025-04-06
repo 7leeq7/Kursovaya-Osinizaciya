@@ -35,7 +35,7 @@ export const Navigation = () => {
       <Container>
         <Navbar.Brand as={Link} to="/">
           <FontAwesomeIcon icon={faTruck} className="me-2" />
-          АссенизаторПро
+          МитсоАссенизатор
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
