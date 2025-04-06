@@ -1439,6 +1439,46 @@ app.patch('/api/orders/:id/status', authenticateToken, authorizeRole(['admin', '
     );
 });
 
+// Отмена заказа пользователем
+app.patch('/api/orders/:id/cancel', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const user_id = req.user.userId;
+    
+    // Проверяем, существует ли заказ и принадлежит ли он пользователю
+    db.get('SELECT * FROM orders WHERE id = ? AND user_id = ?', [id, user_id], (err, order) => {
+        if (err) {
+            return res.status(500).json({ error: 'Ошибка при проверке заказа' });
+        }
+        
+        if (!order) {
+            return res.status(404).json({ error: 'Заказ не найден или не принадлежит вам' });
+        }
+        
+        // Проверяем, можно ли отменить заказ (только если статус pending или confirmed)
+        if (order.status !== 'pending' && order.status !== 'confirmed') {
+            return res.status(400).json({ error: 'Невозможно отменить заказ в текущем статусе' });
+        }
+        
+        // Отменяем заказ
+        db.run(
+            'UPDATE orders SET status = ? WHERE id = ?',
+            ['cancelled', id],
+            function(err) {
+                if (err) {
+                    return res.status(500).json({ error: 'Ошибка при отмене заказа' });
+                }
+                
+                res.json({ 
+                    id: Number(id), 
+                    status: 'cancelled', 
+                    updated: true,
+                    message: 'Заказ успешно отменен'
+                });
+            }
+        );
+    });
+});
+
 // Добавление отзыва к заказу
 app.post('/api/feedback', authenticateToken, (req, res) => {
     const { order_id, rating, comment } = req.body;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Form, Alert, Tab, Nav, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Alert, Tab, Nav, Badge, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, 
@@ -15,7 +15,9 @@ import {
   faSignOutAlt,
   faPercent,
   faShoppingCart,
-  faClock
+  faClock,
+  faBan,
+  faInfoCircle
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { API_URL } from '../config';
@@ -48,6 +50,14 @@ interface Order {
   category: string;
 }
 
+// Обновляем маппинг статусов заказов на русский язык
+const orderStatusMap: { [key: string]: { label: string; color: string; } } = {
+  'pending': { label: 'В обработке', color: 'warning' },
+  'confirmed': { label: 'Подтвержден', color: 'info' },
+  'completed': { label: 'Выполнен', color: 'success' },
+  'cancelled': { label: 'Отменен', color: 'danger' }
+};
+
 const Profile = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,6 +80,12 @@ const Profile = () => {
   );
   const [message, setMessage] = useState({ type: '', text: '' });
   const [orders, setOrders] = useState<Order[]>([]);
+  const [cancellingOrderId, setCancellingOrderId] = useState<number | null>(null);
+  const [orderActionStatus, setOrderActionStatus] = useState({ 
+    loading: false, 
+    error: '', 
+    success: '' 
+  });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -218,6 +234,57 @@ const Profile = () => {
         text: 'Ошибка при изменении пароля'
       });
     }
+  };
+
+  // Добавляем функцию отмены заказа
+  const handleCancelOrder = async (orderId: number) => {
+    try {
+      setOrderActionStatus({ loading: true, error: '', success: '' });
+      setCancellingOrderId(orderId);
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Токен не найден');
+      }
+
+      const response = await axios.patch(
+        `${API_URL}/orders/${orderId}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Обновляем состояние заказа в списке
+      setOrders(orders.map(order => 
+        order.id === orderId 
+          ? { ...order, status: 'cancelled' } 
+          : order
+      ));
+
+      setOrderActionStatus({ 
+        loading: false, 
+        error: '', 
+        success: 'Заказ успешно отменен' 
+      });
+
+      // Очищаем сообщение об успехе через 3 секунды
+      setTimeout(() => {
+        setOrderActionStatus(prev => ({ ...prev, success: '' }));
+      }, 3000);
+    } catch (error: any) {
+      console.error('Ошибка при отмене заказа:', error);
+      setOrderActionStatus({ 
+        loading: false, 
+        error: error.response?.data?.error || 'Ошибка при отмене заказа', 
+        success: '' 
+      });
+    } finally {
+      setCancellingOrderId(null);
+    }
+  };
+
+  // Проверяем, можно ли отменить заказ
+  const canCancelOrder = (order: Order) => {
+    return order.status === 'pending' || order.status === 'confirmed';
   };
 
   if (isLoading) {
@@ -434,6 +501,19 @@ const Profile = () => {
                   <Tab.Pane eventKey="orders">
                     <div className="p-3">
                       <h3 className="mb-4">История заказов</h3>
+                      
+                      {orderActionStatus.error && (
+                        <Alert variant="danger" dismissible onClose={() => setOrderActionStatus(prev => ({ ...prev, error: '' }))}>
+                          {orderActionStatus.error}
+                        </Alert>
+                      )}
+                      
+                      {orderActionStatus.success && (
+                        <Alert variant="success" dismissible onClose={() => setOrderActionStatus(prev => ({ ...prev, success: '' }))}>
+                          {orderActionStatus.success}
+                        </Alert>
+                      )}
+                      
                       {orders.length === 0 ? (
                         <Alert variant="info">
                           У вас пока нет заказов
@@ -446,8 +526,8 @@ const Profile = () => {
                                 <Card.Body>
                                   <Card.Title className="d-flex justify-content-between align-items-center mb-3">
                                     <span>{order.title}</span>
-                                    <Badge bg={order.status === 'pending' ? 'warning' : 'success'}>
-                                      {order.status === 'pending' ? 'В обработке' : 'Выполнен'}
+                                    <Badge bg={orderStatusMap[order.status]?.color || 'secondary'}>
+                                      {orderStatusMap[order.status]?.label || order.status}
                                     </Badge>
                                   </Card.Title>
                                   <Card.Text>
@@ -464,6 +544,36 @@ const Profile = () => {
                                       Итоговая стоимость: {order.final_price} руб.
                                     </strong>
                                   </Card.Text>
+                                  
+                                  {canCancelOrder(order) && (
+                                    <div className="mt-3">
+                                      <Button 
+                                        variant="outline-danger" 
+                                        size="sm" 
+                                        onClick={() => handleCancelOrder(order.id)}
+                                        disabled={cancellingOrderId === order.id}
+                                      >
+                                        {cancellingOrderId === order.id ? (
+                                          <>
+                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                                            Отмена заказа...
+                                          </>
+                                        ) : (
+                                          <>
+                                            <FontAwesomeIcon icon={faBan} className="me-2" />
+                                            Отменить заказ
+                                          </>
+                                        )}
+                                      </Button>
+                                    </div>
+                                  )}
+                                  
+                                  {order.status === 'cancelled' && (
+                                    <Alert variant="secondary" className="mt-3 mb-0 py-2">
+                                      <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
+                                      Заказ был отменен
+                                    </Alert>
+                                  )}
                                 </Card.Body>
                                 <Card.Footer className="text-muted">
                                   <small>
