@@ -34,6 +34,11 @@ import truck5 from '../assets/images/trucks/truck5.jpg';
 import truck6 from '../assets/images/trucks/truck6.jpg';
 // @ts-ignore
 import truck7 from '../assets/images/trucks/truck7.jpg';
+// @ts-ignore
+import iconWhite from '../assets/images/icon white.png';
+// @ts-ignore
+import iconBlack from '../assets/images/icon black.png';
+
 
 // Компонент для отображения рейтинга в виде звезд
 interface StarRatingProps {
@@ -191,7 +196,7 @@ export const Home = () => {
     <Container className="py-5">
       {/* Hero Section */}
       <Row className="align-items-center mb-5">
-        <Col md={6}>
+        <Col md={6} data-aos="fade-right" data-aos-delay="100">
           <h1 className="display-4 mb-4">Услуги ассенизации</h1>
           <p className="lead mb-4">
             Мы предоставляем профессиональные услуги по откачке и вывозу жидких бытовых отходов. 
@@ -210,15 +215,20 @@ export const Home = () => {
             </Button>
           </Link>
         </Col>
-        <Col md={6} className="text-center">
-          <FontAwesomeIcon icon={faTruck} size="8x" className="text-primary mt-4 mt-md-0" />
+        <Col md={6} className="text-center" data-aos="fade-left" data-aos-delay="200">
+          <img 
+            src={theme === 'light' ? iconBlack : iconWhite} 
+            alt="Логотип" 
+            className="mt-4 mt-md-0" 
+            style={{ height: '400px', width: 'auto' }} 
+          />
         </Col>
       </Row>
 
       {/* Features Section */}
-      <h2 className="text-center mb-4">Почему выбирают нас</h2>
+      <h2 className="text-center mb-4" data-aos="fade-up">Почему выбирают нас</h2>
       <Row xs={1} md={2} lg={4} className="g-4 mb-5">
-        <Col>
+        <Col data-aos="zoom-in" data-aos-delay="100">
           <Card className="h-100 border-0 shadow-sm">
             <Card.Body className="text-center">
               <FontAwesomeIcon icon={faTruck} size="3x" className="text-primary mb-3" />
@@ -229,7 +239,7 @@ export const Home = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col>
+        <Col data-aos="zoom-in" data-aos-delay="200">
           <Card className="h-100 border-0 shadow-sm">
             <Card.Body className="text-center">
               <FontAwesomeIcon icon={faCheckCircle} size="3x" className="text-primary mb-3" />
@@ -240,7 +250,7 @@ export const Home = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col>
+        <Col data-aos="zoom-in" data-aos-delay="300">
           <Card className="h-100 border-0 shadow-sm">
             <Card.Body className="text-center">
               <FontAwesomeIcon icon={faClock} size="3x" className="text-primary mb-3" />
@@ -251,7 +261,7 @@ export const Home = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col>
+        <Col data-aos="zoom-in" data-aos-delay="400">
           <Card className="h-100 border-0 shadow-sm">
             <Card.Body className="text-center">
               <FontAwesomeIcon icon={faPhone} size="3x" className="text-primary mb-3" />
@@ -267,11 +277,11 @@ export const Home = () => {
       {/* Фотогалерея машин */}
       <Row className="mb-5">
         <Col>
-          <h2 className="text-center mb-4">
+          <h2 className="text-center mb-4" data-aos="fade-up">
             <FontAwesomeIcon icon={faImages} className="text-primary me-2" />
             Наш автопарк
           </h2>
-          <Card className="shadow-sm">
+          <Card className="shadow-sm" data-aos="fade-up" data-aos-delay="100">
             <Card.Body className="p-0">
               <Carousel
                 fade
@@ -342,12 +352,12 @@ export const Home = () => {
       </Row>
 
       {/* Отзывы клиентов */}
-      <h2 className="text-center mb-4">Отзывы наших клиентов</h2>
+      <h2 className="text-center mb-4" data-aos="fade-up">Отзывы наших клиентов</h2>
       <Row className="mb-5">
         <Col md={8} className="mx-auto">
           {/* Средний рейтинг */}
           {feedback.length > 0 && (
-            <Card className="shadow-sm mb-4 text-center">
+            <Card className="shadow-sm mb-4 text-center" data-aos="fade-up" data-aos-delay="100">
               <Card.Body>
                 <h3 className="mb-3">Средняя оценка</h3>
                 <div className="d-flex align-items-center justify-content-center mb-2">
@@ -359,7 +369,7 @@ export const Home = () => {
             </Card>
           )}
           
-          <Card className="shadow-sm mb-4">
+          <Card className="shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
             <Card.Body>
               {loading ? (
                 <div className="text-center py-4">
@@ -392,7 +402,7 @@ export const Home = () => {
           </Card>
 
           {isAuthenticated ? (
-            <Card className="shadow-sm">
+            <Card className="shadow-sm" data-aos="fade-up" data-aos-delay="300">
               <Card.Header className={theme === 'light' ? 'bg-light' : 'bg-dark'}>
                 <h5 className="mb-0">
                   <FontAwesomeIcon icon={faComment} className="me-2" />
@@ -434,7 +444,7 @@ export const Home = () => {
               </Card.Body>
             </Card>
           ) : (
-            <Card className="shadow-sm text-center">
+            <Card className="shadow-sm text-center" data-aos="fade-up" data-aos-delay="300">
               <Card.Body>
                 <p className="mb-3">Войдите в аккаунт, чтобы оставить отзыв</p>
                 <Link to="/login">
@@ -449,7 +459,7 @@ export const Home = () => {
       </Row>
 
       {/* CTA Section */}
-      <Card className="bg-primary text-white text-center p-5">
+      <Card className="bg-primary text-white text-center p-5" data-aos="zoom-in" data-aos-delay="100">
         <Card.Body>
           <h2 className="mb-4">Нужна регулярная откачка?</h2>
           <p className="lead mb-4">

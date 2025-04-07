@@ -136,23 +136,23 @@ const Register = () => {
     <Container className="py-5">
       <Row className="justify-content-center">
         <Col md={6} lg={5}>
-          <Card className="shadow">
+          <Card className="shadow" data-aos="zoom-in">
             <Card.Body className="p-4">
-              <div className="text-center mb-4">
+              <div className="text-center mb-4" data-aos="fade-down" data-aos-delay="100">
                 <FontAwesomeIcon icon={faUserPlus} size="3x" className="text-primary mb-3" />
                 <h2>Регистрация</h2>
                 <p className="text-muted">Создайте аккаунт для доступа к сервису</p>
               </div>
               
               {success ? (
-                <Alert variant="success" className="text-center">
+                <Alert variant="success" className="text-center" data-aos="fade-up" data-aos-delay="200">
                   <h4>Регистрация успешна!</h4>
                   <p>
                     Ваш аккаунт успешно создан. Сейчас вы будете перенаправлены на страницу входа...
                   </p>
                 </Alert>
               ) : (
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={handleSubmit} data-aos="fade-up" data-aos-delay="200">
                   {errors.submit && (
                     <Alert variant="danger">{errors.submit}</Alert>
                   )}

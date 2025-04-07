@@ -46,9 +46,9 @@ export const Login = () => {
     <Container className="py-5">
       <Row className="justify-content-center">
         <Col md={6} lg={5}>
-          <Card className="shadow">
+          <Card className="shadow" data-aos="zoom-in">
             <Card.Body className="p-4">
-              <div className="text-center mb-4">
+              <div className="text-center mb-4" data-aos="fade-down" data-aos-delay="100">
                 <FontAwesomeIcon icon={faSignInAlt} size="3x" className="text-primary" />
                 <h2 className="mt-3">Вход в аккаунт</h2>
               </div>
@@ -59,7 +59,7 @@ export const Login = () => {
                 </Alert>
               )}
 
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} data-aos="fade-up" data-aos-delay="200">
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
                   <div className="input-group">

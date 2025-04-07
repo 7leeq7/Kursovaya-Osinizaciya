@@ -8,7 +8,7 @@ const NotFound = () => {
     <Container className="py-5 text-center">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
-          <div className="mb-4">
+          <div className="mb-4" data-aos="zoom-in">
             <FontAwesomeIcon 
               icon={faExclamationTriangle} 
               size="5x" 
@@ -21,7 +21,7 @@ const NotFound = () => {
             </p>
           </div>
           
-          <div className="d-grid gap-3 d-md-flex justify-content-md-center">
+          <div className="d-grid gap-3 d-md-flex justify-content-md-center" data-aos="fade-up" data-aos-delay="200">
             <Link to="/" className="btn btn-primary btn-lg">
               <FontAwesomeIcon icon={faHome} className="me-2" />
               На главную

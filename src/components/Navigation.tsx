@@ -8,6 +8,9 @@ import {
   faUserPlus, faCog, faUserTie, faSun, faMoon
 } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../contexts/ThemeContext';
+// @ts-ignore
+import iconWhite from '../assets/images/icon white.png';
+// @ts-ignore
 
 export const Navigation = () => {
   const { user, logout, isAdmin, isEmployee } = useAuthContext();
@@ -36,8 +39,13 @@ export const Navigation = () => {
   return (
     <Navbar bg="primary" variant="dark" expand="lg" sticky="top">
       <Container>
-        <Navbar.Brand as={Link} to="/">
-          <FontAwesomeIcon icon={faTruck} className="me-2" />
+        <Navbar.Brand as={Link} to="/" data-aos="fade-right">
+          <img 
+            src={iconWhite} 
+            alt="Логотип" 
+            className="me-2"
+            style={{ height: '60px', width: 'auto' }} 
+          />
           МитсоАссенизатор
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -50,12 +58,13 @@ export const Navigation = () => {
           size="sm"
           style={{ width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1030 }}
           aria-label={theme === 'light' ? 'Включить темную тему' : 'Включить светлую тему'}
+          data-aos="fade-left"
         >
           <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
         </Button>
         
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
+          <Nav className="me-auto" data-aos="fade-down" data-aos-delay="100">
             <Nav.Link as={Link} to="/">Главная</Nav.Link>
             <Nav.Link as={Link} to="/services">Услуги</Nav.Link>
             <Nav.Link as={Link} to="/about">О компании</Nav.Link>
@@ -76,7 +85,7 @@ export const Navigation = () => {
               </Nav.Link>
             )}
           </Nav>
-          <Nav className="d-flex align-items-center">
+          <Nav className="d-flex align-items-center" data-aos="fade-down" data-aos-delay="200">
             {user ? (
               <>
                 <Nav.Link as={Link} to="/profile" className="me-3">

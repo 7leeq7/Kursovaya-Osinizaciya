@@ -16,8 +16,8 @@ export const About = () => {
       {/* Заголовок */}
       <Row className="mb-5">
         <Col>
-          <h1 className="text-center mb-4">О компании "МитсоАссенизатор"</h1>
-          <p className="lead text-center">
+          <h1 className="text-center mb-4" data-aos="fade-down">О компании "МитсоАссенизатор"</h1>
+          <p className="lead text-center" data-aos="fade-up" data-aos-delay="100">
             Мы предоставляем профессиональные услуги ассенизации с 2025 года.
           </p>
         </Col>
@@ -25,7 +25,7 @@ export const About = () => {
 
       {/* История компании */}
       <Row className="mb-5">
-        <Col lg={6} className="mb-4 mb-lg-0">
+        <Col lg={6} className="mb-4 mb-lg-0" data-aos="fade-right" data-aos-delay="200">
           <h2>
             <FontAwesomeIcon icon={faHistory} className="text-primary me-2" />
             История компании
@@ -45,7 +45,7 @@ export const About = () => {
             обязательства качественно и в срок.
           </p>
         </Col>
-        <Col lg={6}>
+        <Col lg={6} data-aos="fade-left" data-aos-delay="300">
           <Card className="h-100 shadow-sm">
             <Card.Body className="p-4">
               <h3 className="mb-3">Наши ценности</h3>
@@ -106,17 +106,17 @@ export const About = () => {
       {/* Команда */}
       <Row className="mb-5">
         <Col>
-          <h2 className="text-center mb-4">
+          <h2 className="text-center mb-4" data-aos="fade-up">
             <FontAwesomeIcon icon={faUsers} className="text-primary me-2" />
             Наша команда
           </h2>
-          <p className="text-center mb-5">
+          <p className="text-center mb-5" data-aos="fade-up" data-aos-delay="100">
             Наша сила в профессионалах, которые работают в компании
           </p>
         </Col>
       </Row>
       <Row className="mb-5">
-        <Col md={4} className="mb-4">
+        <Col md={4} className="mb-4" data-aos="zoom-in" data-aos-delay="100">
           <Card className="h-100 shadow-sm text-center">
             <Card.Body>
               <div className="rounded-circle overflow-hidden mx-auto mb-3" style={{ width: '150px', height: '150px', backgroundColor: '#f8f9fa' }}>
@@ -130,7 +130,7 @@ export const About = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4} className="mb-4">
+        <Col md={4} className="mb-4" data-aos="zoom-in" data-aos-delay="200">
           <Card className="h-100 shadow-sm text-center">
             <Card.Body>
               <div className="rounded-circle overflow-hidden mx-auto mb-3" style={{ width: '150px', height: '150px', backgroundColor: '#f8f9fa' }}>
@@ -144,7 +144,7 @@ export const About = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4} className="mb-4">
+        <Col md={4} className="mb-4" data-aos="zoom-in" data-aos-delay="300">
           <Card className="h-100 shadow-sm text-center">
             <Card.Body>
               <div className="rounded-circle overflow-hidden mx-auto mb-3" style={{ width: '150px', height: '150px', backgroundColor: '#f8f9fa' }}>
@@ -163,25 +163,25 @@ export const About = () => {
       {/* Контакты */}
       <Row className="mb-5">
         <Col>
-          <Card className="shadow-sm">
+          <Card className="shadow-sm" data-aos="fade-up">
             <Card.Body className="p-4">
               <h2 className="mb-4 text-center">Связаться с нами</h2>
               <Row>
-                <Col md={4} className="mb-4 mb-md-0">
+                <Col md={4} className="mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="100">
                   <div className="text-center">
                     <FontAwesomeIcon icon={faPhone} size="3x" className="text-primary mb-3" />
                     <h4>Телефон</h4>
                     <p>+375 (29) 979-86-09</p>
                   </div>
                 </Col>
-                <Col md={4} className="mb-4 mb-md-0">
+                <Col md={4} className="mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="200">
                   <div className="text-center">
                     <FontAwesomeIcon icon={faEnvelope} size="3x" className="text-primary mb-3" />
                     <h4>Email</h4>
                     <p>7leeq7@gmail.com</p>
                   </div>
                 </Col>
-                <Col md={4}>
+                <Col md={4} data-aos="fade-up" data-aos-delay="300">
                   <div className="text-center">
                     <FontAwesomeIcon icon={faMapMarkerAlt} size="3x" className="text-primary mb-3" />
                     <h4>Адрес</h4>
@@ -197,7 +197,7 @@ export const About = () => {
       {/* Призыв к действию */}
       <Row>
         <Col>
-          <Card className="bg-primary text-white text-center">
+          <Card className="bg-primary text-white text-center" data-aos="zoom-in">
             <Card.Body className="p-5">
               <h2 className="mb-3">Нужны услуги ассенизации?</h2>
               <p className="lead mb-4">

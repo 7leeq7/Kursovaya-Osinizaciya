@@ -146,9 +146,9 @@ export const Services = () => {
 
   return (
     <Container className="py-5">
-      <h1 className="text-center mb-5">Наши услуги</h1>
+      <h1 className="text-center mb-5" data-aos="fade-down">Наши услуги</h1>
 
-      <div className="mb-4">
+      <div className="mb-4" data-aos="fade-up" data-aos-delay="100">
         <div className="d-flex justify-content-center gap-2 flex-wrap">
           <Button
             variant={selectedCategory === '' ? 'primary' : 'outline-primary'}
@@ -171,8 +171,8 @@ export const Services = () => {
       </div>
 
       <Row xs={1} md={2} lg={3} className="g-4">
-        {filteredServices.map(service => (
-          <Col key={service.id}>
+        {filteredServices.map((service, index) => (
+          <Col key={service.id} data-aos="zoom-in" data-aos-delay={100 * (index % 3 + 1)}>
             <Card className="h-100 shadow-sm">
               <Card.Body>
                 <Card.Title className="mb-3">{service.title}</Card.Title>
