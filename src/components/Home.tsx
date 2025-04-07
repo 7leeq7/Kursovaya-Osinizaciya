@@ -17,6 +17,7 @@ import { useState, useEffect, Dispatch, SetStateAction, useRef } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 import { useAuthContext } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Импорт изображений машин
 // @ts-ignore
@@ -75,6 +76,7 @@ export const Home = () => {
   const [averageRating, setAverageRating] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const { user, isAuthenticated } = useAuthContext();
+  const { theme } = useTheme();
   const carouselRef = useRef<any>(null);
 
   // Массив с изображениями машин для карусели
@@ -367,7 +369,7 @@ export const Home = () => {
               ) : feedback.length > 0 ? (
                 <div className="feedback-list">
                   {feedback.map((item) => (
-                    <Card key={item.id} className="mb-3 border-0 bg-light">
+                    <Card key={item.id} className={`mb-3 border-0 ${theme === 'light' ? 'bg-light' : 'bg-dark'}`}>
                       <Card.Body>
                         <div className="d-flex align-items-center mb-2">
                           <FontAwesomeIcon icon={faUser} className="text-primary me-2" />
@@ -391,7 +393,7 @@ export const Home = () => {
 
           {isAuthenticated ? (
             <Card className="shadow-sm">
-              <Card.Header className="bg-light">
+              <Card.Header className={theme === 'light' ? 'bg-light' : 'bg-dark'}>
                 <h5 className="mb-0">
                   <FontAwesomeIcon icon={faComment} className="me-2" />
                   Оставьте свой отзыв

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface AddressSearchProps {
   value: string;
@@ -28,6 +29,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const { theme } = useTheme();
 
   const searchAddress = async (query: string) => {
     if (query.length < 3) {
@@ -128,7 +130,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
       )}
       {showSuggestions && suggestions.length > 0 && (
         <div 
-          className="position-absolute w-100 mt-1 bg-white border rounded shadow-sm" 
+          className={`position-absolute w-100 mt-1 border rounded shadow-sm ${theme === 'light' ? 'bg-white' : ''}`}
           style={{ zIndex: 1000, maxHeight: '300px', overflowY: 'auto' }}
         >
           {suggestions.map((suggestion) => (
@@ -137,8 +139,8 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
               className="p-2 cursor-pointer"
               onClick={() => handleSuggestionClick(suggestion)}
               style={{ cursor: 'pointer' }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme === 'light' ? '#f8f9fa' : '#3a3a3a')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = theme === 'light' ? 'white' : '#2c2c2c')}
             >
               {formatAddress(suggestion)}
             </div>

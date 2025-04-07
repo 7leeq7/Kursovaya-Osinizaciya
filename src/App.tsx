@@ -7,6 +7,7 @@ import { Register } from './components/auth/Register';
 import { Services } from './components/Services';
 import { NotFound } from './components/NotFound';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleBasedRoute } from './components/RoleBasedRoute';
 import { Profile } from './components/Profile';
@@ -19,35 +20,37 @@ function App() {
   console.log('App initialized');
   
   return (
-    <AuthProvider>
-      <Navigation />
-      <Container fluid className="p-0">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/about" element={<About />} />
-          
-          {/* Маршрут для админ-панели - только для пользователей с ролью admin */}
-          <Route path="/admin" element={
-            <RoleBasedRoute allowedRoles={['admin']}>
-              <AdminPanel />
-            </RoleBasedRoute>
-          } />
-          
-          {/* Маршрут для панели сотрудника - для пользователей с ролями admin и employee */}
-          <Route path="/employee" element={
-            <RoleBasedRoute allowedRoles={['admin', 'employee']}>
-              <EmployeePanel />
-            </RoleBasedRoute>
-          } />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Container>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Navigation />
+        <Container fluid className="p-0">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/about" element={<About />} />
+            
+            {/* Маршрут для админ-панели - только для пользователей с ролью admin */}
+            <Route path="/admin" element={
+              <RoleBasedRoute allowedRoles={['admin']}>
+                <AdminPanel />
+              </RoleBasedRoute>
+            } />
+            
+            {/* Маршрут для панели сотрудника - для пользователей с ролями admin и employee */}
+            <Route path="/employee" element={
+              <RoleBasedRoute allowedRoles={['admin', 'employee']}>
+                <EmployeePanel />
+              </RoleBasedRoute>
+            } />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Container>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

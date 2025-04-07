@@ -4,12 +4,14 @@ import axios from 'axios';
 import { API_URL } from '../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faClipboardList, faCog, faUserCog, faPlus, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { theme } = useTheme();
   
   // Состояния для модального окна добавления услуги
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
@@ -457,7 +459,7 @@ export const AdminPanel = () => {
             </Card.Header>
             <Card.Body>
               <div className="table-responsive">
-                <Table striped hover>
+                <Table striped hover className={theme === 'dark' ? 'table-dark' : ''}>
                   <thead>
                     <tr>
                       <th>ID</th>
@@ -506,7 +508,7 @@ export const AdminPanel = () => {
         {/* Список пользователей */}
         <Col md={12} className="mb-4">
           <Card>
-            <Card.Header className="bg-primary text-white">
+            <Card.Header className={theme === 'dark' ? 'bg-dark text-light' : 'bg-primary text-white'}>
               <h5 className="mb-0">
                 <FontAwesomeIcon icon={faUsers} className="me-2" />
                 Управление пользователями
@@ -514,7 +516,7 @@ export const AdminPanel = () => {
             </Card.Header>
             <Card.Body>
               <div className="table-responsive">
-                <Table striped hover>
+                <Table striped hover className={theme === 'dark' ? 'table-dark' : ''}>
                   <thead>
                     <tr>
                       <th>ID</th>
@@ -529,9 +531,7 @@ export const AdminPanel = () => {
                     {users.map(user => (
                       <tr key={user.id}>
                         <td>{user.id}</td>
-                        <td>
-                          {user.username}
-                        </td>
+                        <td>{user.username}</td>
                         <td>{user.email}</td>
                         <td>
                           <Badge bg={

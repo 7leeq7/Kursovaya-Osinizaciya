@@ -1,15 +1,18 @@
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext';
+import { ThemeToggle } from './ThemeToggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, faSignOutAlt, faTruck, faSignInAlt, 
-  faUserPlus, faCog, faUserTie 
+  faUserPlus, faCog, faUserTie, faSun, faMoon
 } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from '../contexts/ThemeContext';
 
 export const Navigation = () => {
   const { user, logout, isAdmin, isEmployee } = useAuthContext();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   // Отладочный вывод для проверки пользователя и его роли
   console.log('Navigation user data:', { 
@@ -38,6 +41,19 @@ export const Navigation = () => {
           МитсоАссенизатор
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        
+        {/* Кнопка переключения темы в правом верхнем углу */}
+        <Button 
+          variant={theme === 'light' ? 'outline-light' : 'dark'} 
+          className="position-absolute top-0 end-0 m-2 rounded-circle p-2" 
+          onClick={toggleTheme}
+          size="sm"
+          style={{ width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1030 }}
+          aria-label={theme === 'light' ? 'Включить темную тему' : 'Включить светлую тему'}
+        >
+          <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
+        </Button>
+        
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">Главная</Nav.Link>

@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Table, Button, Badge, Spinner, Form, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Button, Badge, Spinner, Form, Modal, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { API_URL } from '../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboardList, faUserTie, faCheck, faTimes, faPause, faFileAlt, faEdit, faCalendarAlt, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardList, faUserTie, faCheck, faTimes, faPause, faFileAlt, faEdit, faCalendarAlt, faMapMarkerAlt, faFilter } from '@fortawesome/free-solid-svg-icons';
 import AddressSearch from '../AddressSearch';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const EmployeePanel = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
+  const { theme } = useTheme();
   
   // Состояния для редактирования заказа
   const [showEditModal, setShowEditModal] = useState(false);
@@ -295,26 +297,62 @@ export const EmployeePanel = () => {
         {/* Список заказов */}
         <Col md={12}>
           <Card>
-            <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
+            <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center position-relative">
               <h5 className="mb-0">
                 <FontAwesomeIcon icon={faFileAlt} className="me-2" />
                 Управление заказами
               </h5>
-              <Form.Select 
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="ms-auto w-auto"
-              >
-                <option value="all">Все заказы</option>
-                <option value="pending">Ожидающие</option>
-                <option value="confirmed">Подтвержденные</option>
-                <option value="completed">Завершенные</option>
-                <option value="cancelled">Отмененные</option>
-              </Form.Select>
+              <Dropdown align="end">
+                <Dropdown.Toggle 
+                  variant={theme === 'dark' ? 'dark' : 'light'} 
+                  size="sm"
+                  id="dropdown-filter"
+                  className="rounded-circle p-2"
+                >
+                  <FontAwesomeIcon icon={faFilter} />
+                </Dropdown.Toggle>
+                <Dropdown.Menu className={theme === 'dark' ? 'bg-dark text-light' : ''}>
+                  <Dropdown.Item 
+                    onClick={() => setFilter('all')} 
+                    active={filter === 'all'}
+                    className={theme === 'dark' ? 'text-light' : ''}
+                  >
+                    Все заказы
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => setFilter('pending')} 
+                    active={filter === 'pending'}
+                    className={theme === 'dark' ? 'text-light' : ''}
+                  >
+                    Ожидающие
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => setFilter('confirmed')} 
+                    active={filter === 'confirmed'}
+                    className={theme === 'dark' ? 'text-light' : ''}
+                  >
+                    Подтвержденные
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => setFilter('completed')} 
+                    active={filter === 'completed'}
+                    className={theme === 'dark' ? 'text-light' : ''}
+                  >
+                    Завершенные
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => setFilter('cancelled')} 
+                    active={filter === 'cancelled'}
+                    className={theme === 'dark' ? 'text-light' : ''}
+                  >
+                    Отмененные
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Card.Header>
             <Card.Body>
               <div className="table-responsive">
-                <Table striped hover>
+                <Table striped hover className={theme === 'dark' ? 'table-dark' : ''}>
                   <thead>
                     <tr>
                       <th>ID</th>
@@ -341,7 +379,7 @@ export const EmployeePanel = () => {
                           <td>{order.final_price} ₽</td>
                           <td>{new Date(order.scheduled_time).toLocaleString()}</td>
                           <td>
-                            {getOrderAddress(order) || <span className="text-muted">Не указан</span>}
+                            {getOrderAddress(order) || <span className={theme === 'dark' ? 'text-light' : 'text-muted'}>Не указан</span>}
                           </td>
                           <td>
                             <Badge bg={
