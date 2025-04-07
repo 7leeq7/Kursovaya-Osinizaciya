@@ -37,7 +37,7 @@ export const Navigation = () => {
   };
 
   return (
-    <Navbar bg="primary" variant="dark" expand="lg" sticky="top">
+    <Navbar bg="primary" variant="dark" expand="lg" sticky="top" className="navbar-fixed">
       <Container>
         <Navbar.Brand as={Link} to="/" data-aos="fade-right">
           <img 
@@ -58,7 +58,6 @@ export const Navigation = () => {
           size="sm"
           style={{ width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1030 }}
           aria-label={theme === 'light' ? 'Включить темную тему' : 'Включить светлую тему'}
-          data-aos="fade-left"
         >
           <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
         </Button>
