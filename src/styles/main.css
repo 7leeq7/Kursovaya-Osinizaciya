@@ -396,6 +396,14 @@ a:hover {
   }
 }
 
+@media (max-width: 767px) {
+  .position-absolute.top-0.end-0.m-2 {
+    top: 15px !important;
+    margin-right: 60px !important;
+    z-index: 1031 !important;
+  }
+}
+
 /* Стили для фиксированной навигации */
 .navbar-fixed {
   position: fixed;
@@ -405,6 +413,68 @@ a:hover {
   z-index: 1030;
   width: 100%;
   transition: all 0.3s ease;
+}
+
+/* Стили для кнопки переключения темы */
+.theme-toggle-btn {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .theme-toggle-btn {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0.2rem !important;
+    top: 15px !important; /* Aligned with logo */
+  }
+  
+  /* Увеличиваем расстояние между кнопками входа и регистрации */
+  .auth-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .auth-buttons-container .me-2,
+  .auth-buttons-container .me-md-3 {
+    margin-right: 0 !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  /* Стили для кнопок профиля и выхода */
+  .profile-logout-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  .profile-logout-container .me-2 {
+    margin-right: 0 !important;
+    margin-bottom: 0.75rem !important;
+    text-align: center;
+  }
+  
+  .profile-logout-container .ms-auto {
+    margin-left: 0 !important;
+  }
+  
+  .navbar-brand {
+    font-size: 16px;
+  }
+  
+  .navbar-toggler {
+    padding: 0.2rem 0.4rem;
+    font-size: 1rem;
+  }
+  
+  .navbar-fixed {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
 }
 
 /* Отступ для основного контента, чтобы не перекрывался с навигацией */
@@ -580,4 +650,102 @@ a:hover {
   background-color: var(--card-bg);
   color: var(--text-color);
   border-top: 1px solid var(--card-border);
+}
+
+/* Медиа-запросы для мобильных устройств */
+@media (max-width: 767px) {
+  /* Общие стили для мобильных устройств */
+  body {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  /* Стили для навигации на мобильных */
+  .navbar-brand img {
+    height: 40px !important;
+  }
+  
+  .position-absolute.top-0.end-0.m-2 {
+    margin-right: 5.5rem !important;
+    top: 15px !important;
+    z-index: 1031 !important;
+  }
+  
+  /* Стили для FAQ на мобильных */
+  .faq-collapsible .faq-question {
+    padding: 10px;
+  }
+  
+  .faq-collapsible .faq-question h5 {
+    font-size: 1rem;
+  }
+  
+  .faq-collapsible .faq-answer p {
+    font-size: 0.9rem;
+    padding: 10px !important;
+  }
+  
+  /* Отступ для всего контента на мобильных */
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  /* Уменьшенные отступы */
+  .py-5 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+  
+  .mb-5 {
+    margin-bottom: 2rem !important;
+  }
+  
+  /* Карточки на мобильных */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* Дополнительные стили для очень маленьких экранов */
+@media (max-width: 480px) {
+  .faq-collapsible .faq-question h5 {
+    font-size: 0.9rem;
+  }
+  
+  .faq-collapsible .faq-item {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Скрываем избыточные элементы */
+  .d-xs-none {
+    display: none !important;
+  }
+  
+  /* Центрирование текста на мобильных */
+  .text-xs-center {
+    text-align: center !important;
+  }
+}
+
+/* Исправление высоты контейнера для фиксированной навигации */
+@media (max-width: 991px) {
+  .container-fluid.p-0 {
+    padding-top: 60px !important;
+  }
 } 

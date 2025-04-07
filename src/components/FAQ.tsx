@@ -69,7 +69,7 @@ export const FAQ = () => {
         <Col>
           <h1 className="text-center mb-4" data-aos="fade-down">
             <FontAwesomeIcon icon={faQuestionCircle} className="text-primary me-2" />
-            Часто задаваемые вопросы
+            <span className="d-inline">Частые вопросы</span>
           </h1>
           <p className="lead text-center" data-aos="fade-up" data-aos-delay="100">
             Здесь вы найдете ответы на самые распространенные вопросы о наших услугах
@@ -80,7 +80,7 @@ export const FAQ = () => {
       <Row className="mb-5">
         <Col lg={10} className="mx-auto">
           <Card className={`shadow-sm ${theme === 'dark' ? 'bg-dark text-light' : ''}`} data-aos="fade-up" data-aos-delay="150">
-            <Card.Body>
+            <Card.Body className="p-md-4 p-2">
               <div className="faq-collapsible" data-aos="fade-up" data-aos-delay="200">
                 {faqItems.map((item, index) => (
                   <div key={index} className="faq-item mb-3">
@@ -88,7 +88,7 @@ export const FAQ = () => {
                       className={`faq-question ${theme === 'dark' ? 'dark-faq-question' : ''}`}
                       onClick={() => toggleItem(index)}
                     >
-                      <h5 className="mb-0 fw-bold d-flex justify-content-between align-items-center">
+                      <h5 className="mb-0 fw-bold d-flex justify-content-between align-items-center py-1">
                         <span>{item.question}</span>
                         <FontAwesomeIcon 
                           icon={openItems[index] ? faChevronUp : faChevronDown} 
@@ -97,7 +97,7 @@ export const FAQ = () => {
                       </h5>
                     </div>
                     <div className={`faq-answer ${openItems[index] ? 'open' : ''} ${theme === 'dark' ? 'dark-faq-answer' : ''}`}>
-                      <p className="mb-0 p-3">{item.answer}</p>
+                      <p className="mb-0 p-3 p-md-3">{item.answer}</p>
                     </div>
                   </div>
                 ))}

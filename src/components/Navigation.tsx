@@ -46,14 +46,14 @@ export const Navigation = () => {
             className="me-2"
             style={{ height: '60px', width: 'auto' }} 
           />
-          МитсоАссенизатор
+          <span className="d-none d-sm-inline">МитсоАссенизатор</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         
         {/* Кнопка переключения темы в правом верхнем углу */}
         <Button 
           variant={theme === 'light' ? 'outline-light' : 'dark'} 
-          className="position-absolute top-0 end-0 m-2 rounded-circle p-2" 
+          className="position-absolute top-0 end-0 m-2 rounded-circle p-2 theme-toggle-btn" 
           onClick={toggleTheme}
           size="sm"
           style={{ width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1030 }}
@@ -88,46 +88,50 @@ export const Navigation = () => {
           <Nav className="d-flex align-items-center flex-nowrap" data-aos="fade-down" data-aos-delay="200">
             {user ? (
               <>
-                <Nav.Link as={Link} to="/profile" className="me-2 text-nowrap">
-                  <FontAwesomeIcon icon={faUser} className="me-1" />
-                  <span className="d-none d-lg-inline">{user.username}</span>
-                  <span className="d-none d-xl-inline ms-1 text-white-50">
-                    ({isAdmin() ? 'Админ' : 
-                      isEmployee() ? 'Сотрудник' : 
-                      'Пользователь'})
-                  </span>
-                </Nav.Link>
-                <Button 
-                  variant="outline-light" 
-                  onClick={handleLogout}
-                  size="sm"
-                  className="mx-1"
-                >
-                  <FontAwesomeIcon icon={faSignOutAlt} />
-                  <span className="d-none d-sm-inline ms-1">Выйти</span>
-                </Button>
+                <div className="profile-logout-container d-flex w-100">
+                  <Nav.Link as={Link} to="/profile" className="me-2 text-nowrap text-center">
+                    <FontAwesomeIcon icon={faUser} className="me-1" />
+                    <span className="d-none d-lg-inline">{user.username}</span>
+                    <span className="d-none d-xl-inline ms-1 text-white-50">
+                      ({isAdmin() ? 'Админ' : 
+                        isEmployee() ? 'Сотрудник' : 
+                        'Пользователь'})
+                    </span>
+                  </Nav.Link>
+                  <Button 
+                    variant="outline-light" 
+                    onClick={handleLogout}
+                    size="sm"
+                    className="align-self-center"
+                  >
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                    <span className="d-none d-sm-inline ms-1">Выйти</span>
+                  </Button>
+                </div>
               </>
             ) : (
               <>
-                <Link to="/login" className="me-2">
-                  <Button 
-                    variant="outline-light"
-                    size="sm"
-                  >
-                    <FontAwesomeIcon icon={faSignInAlt} />
-                    <span className="d-none d-sm-inline ms-1">Войти</span>
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button 
-                    variant="light"
-                    className="text-primary fw-bold"
-                    size="sm"
-                  >
-                    <FontAwesomeIcon icon={faUserPlus} />
-                    <span className="d-none d-sm-inline ms-1">Регистрация</span>
-                  </Button>
-                </Link>
+                <div className="auth-buttons-container d-flex align-items-center">
+                  <Link to="/login" className="me-2 me-md-3">
+                    <Button 
+                      variant="outline-light"
+                      size="sm"
+                    >
+                      <FontAwesomeIcon icon={faSignInAlt} />
+                      <span className="d-none d-sm-inline ms-1">Войти</span>
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button 
+                      variant="light"
+                      className="text-primary fw-bold"
+                      size="sm"
+                    >
+                      <FontAwesomeIcon icon={faUserPlus} />
+                      <span className="d-none d-sm-inline ms-1">Регистрация</span>
+                    </Button>
+                  </Link>
+                </div>
               </>
             )}
           </Nav>
