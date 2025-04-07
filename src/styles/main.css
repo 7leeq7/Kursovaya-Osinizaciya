@@ -106,6 +106,54 @@ body {
   color: var(--nav-text);
 }
 
+/* Стили для навигационных ссылок при наведении */
+.navbar-dark .navbar-nav .nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-dark .navbar-nav .nav-link:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Стили для кнопок в навигации при наведении */
+.navbar .btn {
+  transition: all 0.3s ease;
+}
+
+.navbar .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.navbar .btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.navbar .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+}
+
+.dark-theme .navbar .btn-dark:hover {
+  background-color: #444444;
+}
+
+/* Стили для переключателя темы при наведении */
+.navbar .position-absolute.top-0.end-0.rounded-circle:hover {
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
 /* Стили для форм */
 .form-control {
   background-color: var(--input-bg);
@@ -357,4 +405,179 @@ a:hover {
   z-index: 1030;
   width: 100%;
   transition: all 0.3s ease;
+}
+
+/* Отступ для основного контента, чтобы не перекрывался с навигацией */
+.container-fluid.p-0 {
+  padding-top: 76px !important; /* Высота навигации + небольшой отступ */
+}
+
+/* Стили для Accordion в темной теме */
+.dark-theme .accordion-button {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--card-border);
+}
+
+.dark-theme .accordion-button:not(.collapsed) {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.dark-theme .accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 86, 179, 0.25);
+  border-color: var(--primary-color);
+}
+
+.dark-theme .accordion-button::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e0e0e0'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.dark-theme .accordion-button:not(.collapsed)::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.dark-theme .accordion-item {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--card-border);
+}
+
+.dark-theme .accordion-body {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+/* Исправление для сохранения состояния аккордеона при смене темы */
+.accordion-collapse {
+  transition: height 0.3s ease, visibility 0.3s ease, opacity 0.3s ease;
+}
+
+.accordion-collapse.show {
+  opacity: 1;
+  height: auto !important;
+  visibility: visible !important;
+}
+
+.dark-accordion .accordion-collapse.show {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+/* Стили для кастомного аккордеона */
+.custom-accordion-item {
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.custom-accordion-header {
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.custom-accordion-header:hover {
+  opacity: 0.9;
+}
+
+.custom-accordion-body {
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
+}
+
+.transition-icon {
+  transition: transform 0.3s ease;
+}
+
+.transition-icon.rotated {
+  transform: rotate(180deg);
+}
+
+.dark-accordion-item .custom-accordion-header {
+  border-color: var(--card-border);
+}
+
+.dark-accordion-item .custom-accordion-body {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--card-border);
+}
+
+/* Стили для FAQ без аккордеона */
+.faq-simple .faq-item {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.faq-simple .faq-item h4 {
+  padding: 12px 15px;
+  margin: 0;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px 5px 0 0;
+}
+
+.faq-simple .faq-answer {
+  border: 1px solid var(--card-border);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+}
+
+.dark-theme .faq-simple .faq-answer {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border);
+}
+
+.dark-theme .faq-simple .faq-item h4 {
+  background-color: #004494;
+}
+
+/* Стили для сворачиваемых вопросов в FAQ */
+.faq-collapsible .faq-item {
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  margin-bottom: 10px;
+}
+
+.faq-collapsible .faq-question {
+  padding: 15px;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 5px 5px 0 0;
+}
+
+.faq-collapsible .faq-question:hover {
+  background-color: #004494;
+}
+
+.faq-collapsible .faq-icon {
+  transition: transform 0.3s ease;
+}
+
+.faq-collapsible .faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+  background-color: var(--bg-color);
+  opacity: 0;
+}
+
+.faq-collapsible .faq-answer.open {
+  max-height: 500px; /* Достаточно большое значение для любого ответа */
+  opacity: 1;
+}
+
+.dark-theme .faq-collapsible .dark-faq-question {
+  background-color: #004494;
+}
+
+.dark-theme .faq-collapsible .dark-faq-answer {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-top: 1px solid var(--card-border);
 } 

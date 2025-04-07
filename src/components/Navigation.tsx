@@ -63,34 +63,35 @@ export const Navigation = () => {
         </Button>
         
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto" data-aos="fade-down" data-aos-delay="100">
-            <Nav.Link as={Link} to="/">Главная</Nav.Link>
-            <Nav.Link as={Link} to="/services">Услуги</Nav.Link>
-            <Nav.Link as={Link} to="/about">О компании</Nav.Link>
+          <Nav className="me-auto d-flex flex-nowrap" data-aos="fade-down" data-aos-delay="100">
+            <Nav.Link as={Link} to="/" className="py-1 px-2 me-1">Главная</Nav.Link>
+            <Nav.Link as={Link} to="/services" className="py-1 px-2 me-1">Услуги</Nav.Link>
+            <Nav.Link as={Link} to="/about" className="py-1 px-2 me-1">О компании</Nav.Link>
+            <Nav.Link as={Link} to="/faq" className="py-1 px-2 me-1">Частые вопросы</Nav.Link>
             
             {/* Панель сотрудника - видна сотрудникам и админам */}
             {user && (isEmployee() || isAdmin()) && (
-              <Nav.Link as={Link} to="/employee">
+              <Nav.Link as={Link} to="/employee" className="py-1 px-2 me-1">
                 <FontAwesomeIcon icon={faUserTie} className="me-1" />
-                Панель сотрудника
+                <span className="d-none d-md-inline">Сотрудник</span>
               </Nav.Link>
             )}
             
             {/* Админ-панель - видна только админам */}
             {user && isAdmin() && (
-              <Nav.Link as={Link} to="/admin">
+              <Nav.Link as={Link} to="/admin" className="py-1 px-2 me-1">
                 <FontAwesomeIcon icon={faCog} className="me-1" />
-                Админ-панель
+                <span className="d-none d-md-inline">Админ</span>
               </Nav.Link>
             )}
           </Nav>
-          <Nav className="d-flex align-items-center" data-aos="fade-down" data-aos-delay="200">
+          <Nav className="d-flex align-items-center flex-nowrap" data-aos="fade-down" data-aos-delay="200">
             {user ? (
               <>
-                <Nav.Link as={Link} to="/profile" className="me-3">
-                  <FontAwesomeIcon icon={faUser} className="me-2" />
-                  {user.username}
-                  <span className="ms-1 text-white-50">
+                <Nav.Link as={Link} to="/profile" className="me-2 text-nowrap">
+                  <FontAwesomeIcon icon={faUser} className="me-1" />
+                  <span className="d-none d-lg-inline">{user.username}</span>
+                  <span className="d-none d-xl-inline ms-1 text-white-50">
                     ({isAdmin() ? 'Админ' : 
                       isEmployee() ? 'Сотрудник' : 
                       'Пользователь'})
@@ -99,9 +100,11 @@ export const Navigation = () => {
                 <Button 
                   variant="outline-light" 
                   onClick={handleLogout}
+                  size="sm"
+                  className="mx-1"
                 >
-                  <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-                  Выйти
+                  <FontAwesomeIcon icon={faSignOutAlt} />
+                  <span className="d-none d-sm-inline ms-1">Выйти</span>
                 </Button>
               </>
             ) : (
@@ -109,18 +112,20 @@ export const Navigation = () => {
                 <Link to="/login" className="me-2">
                   <Button 
                     variant="outline-light"
+                    size="sm"
                   >
-                    <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
-                    Войти
+                    <FontAwesomeIcon icon={faSignInAlt} />
+                    <span className="d-none d-sm-inline ms-1">Войти</span>
                   </Button>
                 </Link>
                 <Link to="/register">
                   <Button 
                     variant="light"
                     className="text-primary fw-bold"
+                    size="sm"
                   >
-                    <FontAwesomeIcon icon={faUserPlus} className="me-2" />
-                    Регистрация
+                    <FontAwesomeIcon icon={faUserPlus} />
+                    <span className="d-none d-sm-inline ms-1">Регистрация</span>
                   </Button>
                 </Link>
               </>
