@@ -2,11 +2,16 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../contexts/ThemeContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AOS from 'aos';
 
 export const FAQ = () => {
   const { theme } = useTheme();
-  const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
+  const [openItems, setOpenItems] = useState<Record<number, boolean>>({ 0: true });
+  
+  useEffect(() => {
+    AOS.refresh();
+  }, [theme]);
   
   const toggleItem = (index: number) => {
     setOpenItems(prev => ({
@@ -62,11 +67,11 @@ export const FAQ = () => {
     <Container className="py-5">
       <Row className="mb-5">
         <Col>
-          <h1 className="text-center mb-4">
+          <h1 className="text-center mb-4" data-aos="fade-down">
             <FontAwesomeIcon icon={faQuestionCircle} className="text-primary me-2" />
             Часто задаваемые вопросы
           </h1>
-          <p className="lead text-center">
+          <p className="lead text-center" data-aos="fade-up" data-aos-delay="100">
             Здесь вы найдете ответы на самые распространенные вопросы о наших услугах
           </p>
         </Col>
@@ -74,9 +79,9 @@ export const FAQ = () => {
 
       <Row className="mb-5">
         <Col lg={10} className="mx-auto">
-          <Card className={`shadow-sm ${theme === 'dark' ? 'bg-dark text-light' : ''}`}>
+          <Card className={`shadow-sm ${theme === 'dark' ? 'bg-dark text-light' : ''}`} data-aos="fade-up" data-aos-delay="150">
             <Card.Body>
-              <div className="faq-collapsible">
+              <div className="faq-collapsible" data-aos="fade-up" data-aos-delay="200">
                 {faqItems.map((item, index) => (
                   <div key={index} className="faq-item mb-3">
                     <div 
@@ -103,7 +108,7 @@ export const FAQ = () => {
       </Row>
 
       <Row>
-        <Col className="text-center">
+        <Col className="text-center" data-aos="fade-up" data-aos-delay="250">
           <p className="lead">Не нашли ответ на свой вопрос?</p>
           <p>Свяжитесь с нами по телефону <strong>+375 (29) 979-86-09</strong> или напишите на электронную почту <strong>7leeq7@gmail.com</strong></p>
         </Col>
