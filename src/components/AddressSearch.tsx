@@ -29,6 +29,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const suggestionsRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   const searchAddress = async (query: string) => {
@@ -101,6 +102,19 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="position-relative">
       <InputGroup>
@@ -113,9 +127,6 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
           onChange={handleInputChange}
           placeholder="Введите адрес"
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => {
-            setTimeout(() => setShowSuggestions(false), 200);
-          }}
           isInvalid={isInvalid}
         />
         <Form.Control.Feedback type="invalid">
@@ -130,8 +141,14 @@ const AddressSearch: React.FC<AddressSearchProps> = ({ value, onChange, isInvali
       )}
       {showSuggestions && suggestions.length > 0 && (
         <div 
-          className={`position-absolute w-100 mt-1 border rounded shadow-sm ${theme === 'light' ? 'bg-white' : ''}`}
-          style={{ zIndex: 1000, maxHeight: '300px', overflowY: 'auto' }}
+          ref={suggestionsRef}
+          className={`position-absolute w-100 border rounded shadow-sm ${theme === 'light' ? 'bg-white' : 'bg-dark'}`}
+          style={{ 
+            zIndex: 1000, 
+            maxHeight: '300px', 
+            overflowY: 'auto',
+            top: 'calc(100% + 5px)'
+          }}
         >
           {suggestions.map((suggestion) => (
             <div
