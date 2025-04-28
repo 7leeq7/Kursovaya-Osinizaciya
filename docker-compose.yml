@@ -1,15 +1,41 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    container_name: kursovaya-app
+  # Контейнер с базой данных
+  db:
+    image: alpine:latest
+    container_name: kursovaya-db
+    volumes:
+      - ./database.sqlite:/data/database.sqlite
+    command: tail -f /dev/null
+    restart: unless-stopped
+
+  # Контейнер с серверной частью приложения
+  server:
+    build: 
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: kursovaya-server
     ports:
       - "3000:3000"
+    depends_on:
+      - db
     volumes:
       - ./database.sqlite:/app/database.sqlite
     environment:
       - PORT=3000
       - JWT_SECRET=your_jwt_secret_key
       - DB_PATH=/app/database.sqlite
+    restart: unless-stopped
+
+  # Контейнер с клиентской частью приложения
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: kursovaya-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
     restart: unless-stopped 
