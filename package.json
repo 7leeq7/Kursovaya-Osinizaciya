@@ -27,9 +27,12 @@
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^9.1.2",
+    "jest": "^29.7.0",
     "nodemon": "^2.0.22",
+    "supertest": "^6.3.4",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vitest": "^1.4.0"
   },
   "scripts": {
     "start": "node server.js",
@@ -37,7 +40,12 @@
     "client": "vite --port 5173",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:server": "jest --testPathPattern=server",
+    "test:client": "vitest",
+    "test:integration": "node tests/server.integration.test.js"
   },
   "main": "server.js",
   "keywords": [],

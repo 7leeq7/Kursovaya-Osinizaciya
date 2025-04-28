@@ -10,16 +10,14 @@ COPY package*.json ./
 RUN npm install
 
 # Копируем исходный код проекта
-COPY server.js .
-COPY src/ ./src/
+COPY . .
 
-# Устанавливаем переменные окружения
+# Устанавливаем переменные окружения для тестов
+ENV NODE_ENV=test
 ENV PORT=3000
-ENV JWT_SECRET=your_jwt_secret_key
-ENV DB_PATH=/app/database.sqlite
+ENV JWT_SECRET=test_secret_key
+ENV DB_PATH=:memory:
+ENV VITE_API_URL=http://server:3000
 
-# Открываем порт
-EXPOSE 3000
-
-# Запускаем сервер
-CMD ["node", "server.js"] 
+# Команда для запуска тестов
+CMD ["npm", "run", "test:integration"] 

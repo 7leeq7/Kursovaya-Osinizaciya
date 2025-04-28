@@ -48,10 +48,13 @@
 #Запуск контейнера Docker
 docker-compose up -d
 #Проект запущен
-По адрессу http://localhost:3000 можно зайти на веб-приложение
+По адрессу http://localhost:80 можно зайти на веб-приложение
+#Запуск теста
+npm run test:integration
 #Остановка сервера
 docker-compose down
-
+```
+Просто через консоль
 ```bash
 # Установка зависимостей
 npm install

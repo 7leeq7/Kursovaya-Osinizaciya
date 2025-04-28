@@ -21,3 +21,5 @@ docker-compose down
 ## База данных
 
 SQLite база данных сохраняется как том Docker, поэтому данные сохраняются между перезапусками контейнера. 
+
+npm run test:integration 

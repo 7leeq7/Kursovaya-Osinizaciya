@@ -9,11 +9,13 @@
 1. **db** - контейнер с базой данных SQLite
 2. **server** - контейнер с серверной частью приложения
 3. **client** - контейнер с клиентской частью приложения
+4. **tests** - контейнер для запуска тестов
 
 ## Файловая структура
 ```
 ├── Dockerfile.client       # Dockerfile для клиентской части
 ├── Dockerfile.server       # Dockerfile для серверной части
+├── Dockerfile.tests        # Dockerfile для запуска тестов
 ├── database.sqlite         # Файл базы данных SQLite
 ├── docker-compose.yml      # Конфигурация Docker Compose
 ├── nginx.conf              # Конфигурация Nginx
@@ -37,7 +39,7 @@ cd <папка проекта>
 docker-compose up -d
 ```
 
-Это запустит три контейнера:
+Это запустит контейнеры:
 - **kursovaya-db**: контейнер с базой данных
 - **kursovaya-server**: контейнер с API-сервером (порт 3000)
 - **kursovaya-client**: контейнер с клиентской частью (порт 80)
@@ -47,7 +49,25 @@ docker-compose up -d
 - **Клиентская часть**: http://localhost
 - **API-сервер**: http://localhost:3000
 
-### 4. Остановка приложения
+### 4. Запуск тестов
+Для запуска тестов используйте:
+```bash
+docker-compose run tests
+```
+
+Вы также можете запускать определенные наборы тестов:
+```bash
+# Запуск только серверных тестов
+docker-compose run tests npm run test:server
+
+# Запуск только клиентских тестов
+docker-compose run tests npm run test:client
+
+# Запуск тестов в режиме наблюдения (для разработки)
+docker-compose run tests npm run test:watch
+```
+
+### 5. Остановка приложения
 Для остановки и удаления контейнеров выполните:
 ```bash
 docker-compose down
@@ -68,6 +88,7 @@ docker-compose logs
 docker-compose logs client
 docker-compose logs server
 docker-compose logs db
+docker-compose logs tests
 ```
 
 ### Обновление приложения
